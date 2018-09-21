@@ -1,14 +1,14 @@
 Starting the Server :
 
 Either run the available Docker-Image or the maven-generated WAR-File.
-In Both cases, you will need to provide the environmental variables <basepath> (path to where you want the server to save files like logs etc) and <serverurl> the target FROST-Server's URL .
+In Both cases, you will need to provide the environmental variables "<basepath>"" (path to where you want the server to save files like logs etc) and "<serverurl>"" the target FROST-Server's URL .
 
 Example: (basepath) /home/user/chillimport-files , (serverurl) http://frost-server.com/v1.0 
 
 To start the server use : "java -jar server.war"
 
 In case HTTP-Authentication is required, you will need to provide a Username and password in the "username.cfg" - File within the specificed directory
-Format : <Username>:<Password> e.g User1:Password1 
+Format : "<Username>:<Password>"" e.g User1:Password1 
 
 The server will take a couple seconds to start up and will then be available (port 8000)
 
@@ -16,6 +16,6 @@ NOTE : Current Docker-compose  version only works on Linux. If you wish to use d
 
 Compose does not work on Windows due to Path problems.
 
-Docker-Compose File can be found within the repository, replace any <basepath> by an absolute path you wish to use for files created/used by the server and <serverurl> by the used FROST-Server's URL
+Docker-Compose File can be found within the repository, replace any "<basepath>"" by an absolute path you wish to use for files created/used by the server and "<serverurl>"" by the used FROST-Server's URL
 
 If you wish to start the docker image from the terminal instead, pass the basepath and serverurl environment variables via command line (sudo docker run -e envName=<...> server)
