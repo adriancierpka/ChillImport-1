@@ -1,27 +1,18 @@
-Aufsetzen des Servers:
+Starting the Server :
 
-Entweder das beigefügte Docker-image über Docker starten oder die WAR-Datei die beim Maven-Build erzeugt wurde starten.
-Beim start der WAR-Datei muss ein Argument angegeben werden, welches auf das Stammverzeichnis des Servers zeigt.
-In diesem Stammverzeichnis (der Ort kann frei gewählt werden, es müssen nur Lese- und Schreibzugriffe bestehen) werden alle Logs und Konfigurationen gespeichert.
+Either run the available Docker-Image or the maven-generated WAR-File.
+In Both cases, you will need to provide the environmental variables <basepath> (path to where you want the server to save files like logs etc) and <serverurl> the target FROST-Server's URL .
 
+Example: (basepath) /home/user/chillimport-files , (serverurl) http://frost-server.com/v1.0 
 
-Beispielverzeichnis: /home/user/chillimport-files
+To start the server use : "java -jar server.war"
 
-So wird der Server gestartet mit: "java -jar server.war /home/user/chillimport-files"
+In case HTTP-Authentication is required, you will need to provide a Username and password in the "username.cfg" - File within the specificed directory
+Format : <Username>:<Password> e.g User1:Password1 
 
+The server will take a couple seconds to start up and will then be available (port 8000)
 
-In dem Ordner muss eine Datei "server-url.cfg" angelegt und die URL des FROST-Servers dort formlos in die erste Zeile hineinkopiert werden.
-Wird eine HTTP-Authentifizierung benötigt so muss der Nutzername und das Passwort in der Datei "username.cfg" im selben Ordner abgespeichert werden.
-Das Format für den Nutzer "fabi" mit Passwort "password" ist "fabi:password" (ohne Anführungszeichen) und wird so in die erste Zeile der username.cfg geschrieben.
-
-Ohne angegebene Server-URL wird der Server stoppen, ohne angebenen Username läuft er trotzdem.
-
-Nach dem Start des Servers (circa 10sek) steht er unter Port 8000 zur Verfügung.
-
-
-DOCKER :
-
-NOTE : Current compose  version only works on Linux. If you wish to use docker compose on MacOS remove the network_mode argument from the docker-compose file. (Note that localhost FROST-Servers can not be used this way)
+NOTE : Current Docker-compose  version only works on Linux. If you wish to use docker compose on MacOS remove the network_mode argument from the docker-compose file. (Note that localhost FROST-Servers can not be used this way)
 
 Compose does not work on Windows due to Path problems.
 
