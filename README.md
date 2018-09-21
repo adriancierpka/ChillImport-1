@@ -1,7 +1,7 @@
 Starting the Server :
 
 Either run the available Docker-Image or the maven-generated WAR-File.
-In Both cases, you will need to provide the environmental variables "<basepath>"" (path to where you want the server to save files like logs etc) and "<serverurl>"" the target FROST-Server's URL .
+In Both cases, you will need to provide the environmental variables \<basepath\> (path to where you want the server to save files like logs etc) and \<serverurl\> the target FROST-Server's URL .
 
 Example: (basepath) /home/user/chillimport-files , (serverurl) http://frost-server.com/v1.0 
 
