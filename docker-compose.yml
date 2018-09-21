@@ -1,0 +1,11 @@
+version: '2'
+services:
+   ChillImport:
+    image: gitlab-ext.iosb.fraunhofer.de:4567/maximilian.goeckel/pse-sensoren-implementierung
+    volumes:
+     - <configpath>:<configpath>
+    network_mode: "host"
+    environment:
+        - basepath = <configpath>
+        - serverurl = <serverurl>
+

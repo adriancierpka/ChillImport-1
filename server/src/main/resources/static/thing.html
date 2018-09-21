@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create a new Thing.</title>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-3">
+            Name
+        </div>
+        <div class="col-sm-4">
+            <input type="text" id="name" size="25">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            Description:
+        </div>
+        <div class="col-sm-4">
+            <input type="text" id="desc" size="25">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            Properties:
+        </div>
+        <div class="col-sm-4 table-container">
+            <div></div>
+            <table class="table fixed_header" id="properties">
+                <thead>
+                <tr>
+                    <th>
+                        <div>Key</div>
+                    </th>
+                    <th>
+                        <div>Value</div>
+                    </th>
+                    <th>
+                        <div>
+                            <button class="btn btn-default" style="width: auto; margin-top: -5px;"
+                                    onclick="addRow($('#properties'),'10','10')"><span
+                                    class="glyphicon glyphicon-plus"></span></button>
+                        </div>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><input style="text-align: left;" size="10" type="text"></td>
+                    <td><input style="text-align: left;" size="10" type="text"></td>
+                    <td>
+                        <button class="btn btn-default" style="width: auto" onclick="delRow($(this))"><span
+                                class="glyphicon glyphicon-minus"></span></button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            Location:
+        </div>
+        <div class="col-sm-4">
+            <select id="locations" style="width: 250px">
+            </select>
+        </div>
+        <div class="col-sm-4">
+            <button class="btn btn-default" type="button" style="width: auto" value="location.html"
+                    onclick="showLocationModal()"><span class="glyphicon glyphicon-file"></span> Create a new Location
+            </button>
+
+        </div>
+    </div>
+
+    <div class="modal modal-wide fade" id="thingdialog" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #00AAFF">
+                    <b class="headertext" style="color: white; font-size: 20px"></b>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer" id="thingfooter">
+                    <button type="button" class="btn btn-default" onclick="createThing()">Create Thing</button>
+                    <button type="button" class="btn btn-default" onclick="$('#thingdialog').modal('hide');">Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

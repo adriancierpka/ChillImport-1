@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create a new Location</title>
+</head>
+<body>
+<div class="container">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3">
+                Name:
+            </div>
+            <div class="col-sm-4">
+                <input type="text" id="locname" name="name" size="25">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                Description:
+            </div>
+            <div class="col-sm-4">
+                <input type="text" name="description" id="locdescription" size="25">
+            </div>
+        </div>
+        <!-- not necessary sinde only one enctype exists
+        <div class="row">
+            <div class="col-sm-3">
+                Encoding Type:
+            </div>
+            <div class="col-sm-4">
+                <input id="locenctype" list="locenctypes" size="25">
+                <datalist id="locenctypes">
+                    <option value="application/vnd.geo+json">application/vnd.geo+json</option>
+                </datalist>
+            </div>
+        </div>
+        -->
+        <div class="row">
+            <div class="col-sm-3">
+                Location in Coordinates : Longitude,Latitude
+            </div>
+            <div class="col-sm-4">
+                <input type="text" name="location" id="loclocation" size="25">
+            </div>
+        </div>
+
+    </div>
+
+</div>
+</body>
+</html>

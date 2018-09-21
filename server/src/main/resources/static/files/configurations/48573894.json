@@ -1,0 +1,28 @@
+{
+  "id": 48573894,
+  "name": "test",
+  "delimiter": ";",
+  "numberOfHeaderlines": 2,
+  "timezone": "-8",
+  "dateTime": [
+    {
+      "string": "yyyy-MM-dd",
+      "column": 6
+    },
+    {
+      "string": "hh:mm",
+      "column": 7
+    }
+  ],
+  "streamData": [
+    {
+      "dsID": 3,
+      "observations": [
+        5
+      ],
+      "multiStream": false
+    }
+  ],
+  "mapOfMagicNumbers": [],
+  "dataType": "EXCEL"
+}

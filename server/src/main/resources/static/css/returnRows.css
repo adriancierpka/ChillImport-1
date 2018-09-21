@@ -1,0 +1,8 @@
+a {
+    appearance: button; /* CSS3 */
+    -webkit-appearance: button; /* Safari and Chrome */
+    -moz-appearance: button; /* Firefox */
+    -ms-appearance: button; /* Internet Explorer */
+    -o-appearance: button; /* Opera */
+    cursor: default;
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create a mapping</title>
+</head>
+<body onload="loadMapping()">
+<table class="table" id="mappingTable">
+    <thead>
+    <tr>
+        <th>Column:
+            <div class="righttooltip"><span class="glyphicon glyphicon-question-sign"></span>
+                <div class="tooltiptext">The column where you want to apply the mapping</div>
+            </div>
+        </th>
+        <th>Old value:
+            <div class="righttooltip"><span class="glyphicon glyphicon-question-sign"></span>
+                <div class="tooltiptext">The value you want to replace</div>
+            </div>
+        </th>
+        <th>Replaced by:
+            <div class="righttooltip"><span class="glyphicon glyphicon-question-sign"></span>
+                <div class="tooltiptext">The value which replaces the old value</div>
+            </div>
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+<div class="row" style="margin-left: 20px">
+    <button class="btn btn-default" style="" onclick="mapAddRow($('#mappingTable'),'20','20','20')" id="mappingAddRow">
+        <span class="glyphicon glyphicon-plus"></span>
+    </button>
+</div>
+
+<div class="row" style="margin-left: 20px">
+    <button class="btn btn-default" onclick="saveMapping(); addToLog('Mapping saved')"> Save</button>
+</div>
+</body>
+</html>

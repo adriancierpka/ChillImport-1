@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>CHILLImport</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet"/>
+
+    <script type="text/javascript" src="/webjars/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+</head>
+<body onload="serverdown(main)" style="overflow-x: hidden">
+<div class="container-fluid">
+    <div class="row" style="height: 70px; width: 100%">
+        <img src="images/logo.png" style="height: 100%; padding-left: 20px">
+    </div>
+</div>
+
+<!-- navbar -->
+<div class="mynavbar" style="height: 60px; background-color: darkblue">
+    <div class="column" align="left" style="width: 25%">
+
+    </div>
+    <div class="column" style="width: 25%; height: 100%; color: white; padding-top: 10px">
+        <p style="margin: 0px">Connected to:</p>
+        <a href="" target="_blank" id="serverurlbox" style="color: white; white-space: nowrap"></a>
+
+    </div>
+    <div class="column" style="width: 25%">
+
+    </div>
+    <div class="column" align="right" style="width: 25%">
+        <button class="navbutton" onclick="openHelp()">HELP</button>
+    </div>
+</div>
+
+<!-- leftlog
+<div id="leftlogbox" class="leftlogbox" style="visibility: hidden">
+    <p style="color: white">Log:</p>
+    <textarea id="log" readonly style="width: 100%;height: 400px; resize: none;">
+    </textarea>
+</div>
+
+-->
+<!--Start-->
+<div align="center">
+    <div class="row" style="height: 30px"></div>
+    <div class="middleColumn">
+        <div class="rowChoose">
+            <!-- start of choose source-->
+            <div class="column" style="width: 48%">
+                <div id="sourceAcc" class="accordion">
+                    <div class="accpadding">
+                        <p style="font-size: 17px"><b>1. Step: Choose source</b></p>
+                    </div>
+                </div>
+                <div class="panel" align="left" style="height: 150px; display: block">
+                    <div class="panelpadding">
+                        <div>
+                            <h4>Choose the source:</h4>
+                            <form autocomplete="off">
+                                <input type="radio" name="source" value="uploadFile()" onclick="sourcefile()"
+                                       checked="checked">File
+                                <input type="radio" name="source" value="uploadUrl()" onclick="sourcesite()">Website
+                            </form>
+                        </div>
+                        <div id="chooseSource" class="topspace">
+                            <div class="column" style="width: 80%">
+                                <label id="sourcetext"/>Choose sourcefile:</label><br>
+                                <input id="sourceinput" type='text' style="display:none"
+                                       onkeyup="checkinputurl()">
+                                <form id="uploader" method='post' enctype="multipart/form-data">
+                                    <input type="file" name="file" id="file" onchange="checkinputfile()"/>
+                                    <br/>
+                                </form>
+                            </div>
+
+                            <div class="column" style="width: 20%; margin-top: 40px;">
+                                <button id="oksource" disabled="true" class="btn btn-default"
+                                        style="height: 30px;width: 100%;" onclick="fileConfirmed()">OK
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="column" style="width: 4%"></div>
+
+            <!--start of choose Config-->
+            <div class="column" style="width: 48%">
+                <div id="chooseConfigAcc" class="accordion">
+                    <div class="accpadding">
+                        <p style="font-size: 17px"><b>2. Step: Choose or Create a Configuration</b></p>
+                    </div>
+                </div>
+                <div class="panel" style="height: 150px; padding-top: 10px">
+                    <div class="panelpadding">
+                        <button class="bigbutton" onclick="chooseConfig()">Choose Configuration</button>
+                        <div class="column" style="width: 4%; height: 20px"></div>
+                        <button class="bigbutton" onclick="createConfig()">Create Configuration</button>
+                        <!--choose config dialog-->
+
+                        <div class="column" id="chooseConfigDialog" style="display: none; width: 100%" align="left">
+                            <div class="row" style="height: 20px"></div>
+                            <div>Choose Configuration:</div>
+                            <select id="configs" style="width: 100%">
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="height: 35px"></div>
+
+        <!-- Configuration -->
+        <div id="currentConfigAcc" class="accordion">
+            <div class="column accpadding" align="left" style="width: 50%">
+                <p style="font-size: 17px"><b>3. Step: Current Configuration</b></p>
+            </div>
+            <div class="column" align="right" style="width: 50%;">
+                <button id="previewbutton" class="btn btn-info"
+                        style="width: auto; height: 100%; background-color: #00AAFF;"
+                        onclick="$('#previewdiv').toggle()" disabled="true">Toggle Preview
+                </button>
+            </div>
+        </div>
+        <div class="panel" align="left">
+            <div class="panelpadding">
+                <!--Preview-->
+                <div id="previewdiv" class="row" style="margin: 8px;display: none">
+                    <div class="column" style="width: 100%">
+                        <div>
+                            <label>Preview:</label>
+                        </div>
+                        <div style="background-color: white;overflow-x: auto;overflow-y: hidden;">
+                            <table class="table previewtable" id="previewTable">
+                                <thead>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <hr/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-left: 8px; margin-top: 8px">
+                    <div class="column" style="width: 50%">
+                        <!-- Delimiter-->
+                        <div>
+                            <label>1: Delimiter:</label>
+                            <div class="righttooltip"><span class="glyphicon glyphicon-question-sign"></span>
+                                <div class="tooltiptext">Columns are separated by a delimiter</div>
+                            </div>
+                            <br>
+                            <input size="4" type="text" id="delimiter" name="delimiter" value=";" onkeyup="changedDelimiter(this.value)">
+                        </div>
+
+                        <div class="topspace" style="height: 20px"></div>
+
+                        <!--headerlines-->
+                        <div class="topspace">
+                            <label>2: Number of header lines:</label>
+                            <div class="righttooltip"><span class="glyphicon glyphicon-question-sign"></span>
+                                <div class="tooltiptext">Number of the first lines to be ignored</div>
+                            </div>
+                            <br>
+                            <input size="4" type="text" id="headerlines" name="headerlines" value="0" onkeyup="changedHeaderLines(this.value)">
+                        </div>
+
+                        <div class="topspace" style="height: 20px"></div>
+
+                        <!-- current mapping-->
+                        <div class="topspace">
+                            <label>3: Current mapping:</label>
+                            <div class="righttooltip"><span class="glyphicon glyphicon-question-sign"></span>
+                                <div class="tooltiptext">Here you can save if a value should be replaced with an other
+                                    value
+                                </div>
+                            </div>
+                            <br>
+                            <button class="btn btn-default" value="mapping.html"
+                                    onclick="showMappingModal()"> Show Mapping
+                            </button>
+                        </div>
+                    </div>
+                    <div class="column" style="width: 50%">
+
+                        <!-- DateTime -->
+                        <div class="row" style="padding: 10px">
+                            <label>4: DateTime:</label><br>
+                            <label>Timezone:</label>
+
+                            <br>
+                            <select class="select2" id="selecttime" style="width: 65%">
+                                <option></option>
+                                <option data-value="-12" value="UTC-12h - International Date Line West">UTC-12h -
+                                    International Date Line West
+                                </option>
+                                <option data-value="-11" value="UTC-11h - West Samoa Time">UTC-11h - West Samoa Time
+                                </option>
+                                <option data-value="-10" value="UTC-10h - Hawaii-Aleutian Standard Time">UTC-10h -
+                                    Hawaii-Aleutian Standard Time
+                                </option>
+                                <option data-value="-9" value="UTC-9h - Alaska Standard Time">UTC-9h - Alaska Standard
+                                    Time
+                                </option>
+                                <option data-value="-8" value="UTC-8h - Pacific Standard Time">UTC-8h - Pacific Standard
+                                    Time
+                                </option>
+                                <option data-value="-7" value="UTC-7h - Mountain Standard Time">UTC-7h - Mountain
+                                    Standard Time
+                                </option>
+                                <option data-value="-6" value="UTC-6h - Central Standard Time">UTC-6h - Central Standard
+                                    Time
+                                </option>
+                                <option data-value="-5" value="UTC-5h - Eastern Standard Time">UTC-5h - Eastern Standard
+                                    Time
+                                </option>
+                                <option data-value="-4" value="UTC-4h - Atlantic Standard Time">UTC-4h - Atlantic
+                                    Standard Time
+                                </option>
+                                <option data-value="-3" value="UTC-3h - Brazilia Time">UTC-3h - Brazilia Time</option>
+                                <option data-value="-2" value="UTC-2h - Brazilian Eastern Standard Time">UTC-2h -
+                                    Brazilian Eastern Standard Time
+                                </option>
+                                <option data-value="-1" value="UTC-1h - Azores Standard Time">UTC-1h - Azores Standard
+                                    Time
+                                </option>
+                                <option data-value="0" value="UTC+0h - West European Time">UTC+0h - West European Time
+                                </option>
+                                <option data-value="1" value="UTC+1h - Central European Time">UTC+1h - Central European
+                                    Time
+                                </option>
+                                <option data-value="2" value="UTC+2h - East European Time">UTC+2h - East European Time
+                                </option>
+                                <option data-value="3" value="UTC+3h - East African Time">UTC+3h - East African Time
+                                </option>
+                                <option data-value="4" value="UTC+4h - Gulf Standard Time">UTC+4h - Gulf Standard Time
+                                </option>
+                                <option data-value="5" value="UTC+5h - Pakistan Time">UTC+5h - Pakistan Time</option>
+                                <option data-value="6" value="UTC+6h - British Indian Ocean Time">UTC+6h - British
+                                    Indian Ocean Time
+                                </option>
+                                <option data-value="7" value="UTC+7h - Indochina Time">UTC+7h - Indochina Time</option>
+                                <option data-value="8" value="UTC+8h - China Standard Time">UTC+8h - China Standard
+                                    Time
+                                </option>
+                                <option data-value="9" value="UTC+9h - Japan/Korea Standard Time">UTC+9h - Japan/Korea
+                                    Standard Time
+                                </option>
+                                <option data-value="10" value="UTC+10h - Australian Eastern Standard Time">UTC+10h -
+                                    Australian Eastern Standard Time
+                                </option>
+                                <option data-value="11" value="UTC+11h - Norfolk Time">UTC+11h - Norfolk Time</option>
+                                <option data-value="12" value="UTC+12h - International Date Line East">UTC+12h -
+                                    International Date Line East
+                                </option>
+                            </select>
+
+                            <!-- datalist solution
+                            <input id="timezone" list="zones" type="text" name="zone" style="position: relative; left: 10px;">
+                            <datalist id="zones">
+                                <option data-value="-12" value="UTC-12h - International Date Line West"></option>
+                                <option data-value="-11" value="UTC-11h - West Samoa Time"></option>
+                                <option data-value="-10" value="UTC-10h - Hawaii-Aleutian Standard Time"></option>
+                                <option data-value="-9" value="UTC-9h - Alaska Standard Time"></option>
+                                <option data-value="-8" value="UTC-8h - Pacific Standard Time"></option>
+                                <option data-value="-7" value="UTC-7h - Mountain Standard Time"></option>
+                                <option data-value="-6" value="UTC-6h - Central Standard Time"></option>
+                                <option data-value="-5" value="UTC-5h - Eastern Standard Time"></option>
+                                <option data-value="-4" value="UTC-4h - Atlantic Standard Time"></option>
+                                <option data-value="-3" value="UTC-3h - Brazilia Time"></option>
+                                <option data-value="-2" value="UTC-2h - Brazilian Eastern Standard Time"></option>
+                                <option data-value="-1" value="UTC-1h - Azores Standard Time"></option>
+                                <option data-value="0" value="UTC+0h - West European Time"></option>
+                                <option data-value="1" value="UTC+1h - Central European Time"></option>
+                                <option data-value="2" value="UTC+2h - East European Time"></option>
+                                <option data-value="3" value="UTC+3h - East African Time"></option>
+                                <option data-value="4" value="UTC+4h - Gulf Standard Time"></option>
+                                <option data-value="5" value="UTC+5h - Pakistan Time"></option>
+                                <option data-value="6" value="UTC+6h - British Indian Ocean Time"></option>
+                                <option data-value="7" value="UTC+7h - Indochina Time"></option>
+                                <option data-value="8" value="UTC+8h - China Standard Time"></option>
+                                <option data-value="9" value="UTC+9h - Japan/Korea Standard Time"></option>
+                                <option data-value="10" value="UTC+10h - Australian Eastern Standard Time"></option>
+                                <option data-value="11" value="UTC+11h - Norfolk Time"></option>
+                                <option data-value="12" value="UTC+12h - International Date Line East"></option>
+                            </datalist>
+                            -->
+
+                        </div>
+
+                        <div class="row topspace">
+                            <div class="col-sm-10">
+                                <div class="table-container">
+                                    <div></div>
+                                    <table class="table fixed_header" id="timeTable">
+                                        <thead>
+                                        <tr>
+                                            <th style="min-width: 90px">
+                                                <div>
+                                                    <label>
+                                                        Column
+                                                    </label>
+                                                    <div class="righttooltip questionmark"><span
+                                                            class="glyphicon glyphicon-question-sign"></span>
+                                                        <div class="tooltiptext">Specify the column/columns containing
+                                                            the
+                                                            date and time of the observations
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </th>
+                                            <th style="min-width: 120px">
+                                                <div>
+                                                    <label>
+                                                        Format
+                                                    </label>
+                                                    <div class="righttooltip questionmark"><span
+                                                            class="glyphicon glyphicon-question-sign"></span>
+                                                        <div class="tooltiptext">Specify the format of the date and time
+                                                            in
+                                                            this column as regular expression. (y - Year, M - Month, d -
+                                                            Day, H - Hour, m - Minute, s - Second,
+                                                            [, VV - Timezone mandatory])
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th>
+                                                <div>
+                                                    <button class="btn btn-default" style="width: auto"
+                                                            onclick="addRow($('#timeTable'),'2','20'); optimzeforsource();"><span
+                                                            class="glyphicon glyphicon-plus"></span></button>
+                                                </div>
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td><input size="2" type="text"></td>
+                                            <td><input size="20" type="text"></td>
+                                            <td>
+                                                <button class="btn btn-default" style="width: auto"
+                                                        onclick="delRow($(this))"><span
+                                                        class="glyphicon glyphicon-minus"></span></button>
+                                            </td>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- END OF DATETIME -->
+                    </div>
+                </div>
+
+                <!--start of config part 2 -->
+                <div id="thingbox" style="display: none">
+                    <!--Thing-->
+                    <label>5: Thing:</label><br>
+                    <select class="select2" id="things" style="width: 200px">
+                    </select>
+                    <button class="btn btn-default" value="thing.html" onclick="showThingModal()">
+                        <span class="glyphicon glyphicon-file"></span>
+                        Create Thing
+                    </button>
+                </div>
+
+                <!-- start of config part 3 -->
+                <div id="streambox" style="display: none">
+                    <!-- Start of Datastream-->
+                    <div class="row" style="height: 50px"></div>
+                    <div class="row" style="padding: 10px">
+                        <div class="col-lg-12" style="height: 200px;">
+
+                            <label>6: Datastreams:</label><br>
+                            <datalist id="thingstreams">
+                            </datalist>
+                            <div id="datastreams" class="topspace"
+                                 style="height: 170px;overflow-x: auto;overflow-y: hidden; white-space: nowrap;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div align="right" style="padding-right: 20px">
+                            <button class="btn btn-default" value="datastream.html"
+                                    onclick="if($('#things').val()) {showStreamModal()} else {addToLog('Choose a Thing first.')}">
+                                <span class="glyphicon glyphicon-file"></span>
+                                Create DS
+                            </button>
+                            <button class="btn btn-default" onclick="addDatastream()">Add DS</button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!--
+                <div class="row"></div>
+
+                <div class="row"
+                     style="padding-left: 40px; padding-right: 20px; padding-top: 1px; padding-bottom: 10px">
+                    <div class="row">
+                        <button class="btn btn-default" onclick="saveConfig()">Save Config</button>
+                    </div>
+
+                    <div class="row">
+                        <button class="btn btn-default" onclick="resetConfig()">Reset Config</button>
+                    </div>
+                </div>
+                -->
+
+            </div>  <!-- end of panelpadding -->
+
+            <div class="panelbluebox" align="right">
+                <div class="panelpadding" style="padding-top: 18px">
+                    <div class="row">
+                        <div class="column" style="width: 70%">
+                            <button id="savebtn" class="btn btn-default" onclick="saveConfig()" style="display: none">
+                                Save Config
+                            </button>
+                            <button id="nextbtn" class="btn btn-default" onclick="shownext()">Next</button>
+                        </div>
+                        <div class="column" style="width: 30%" align="left">
+                            <button id="resetbtn" class="btn btn-default" onclick="resetConfig()"
+                                    style="margin-left: 30px">
+                                Reset Config
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- END OF CONFIGURATION-->
+
+        <div class="row" style="height: 25px"></div>
+
+        <!-- 4. step -->
+        <div class="accordion">
+            <div class="accpadding">
+                <p style="font-size: 17px"><b>4. Step: Import</b></p>
+            </div>
+        </div>
+        <div class="panel" align="left"
+             style="display: block;padding-left: 20px; padding-right: 20px; padding-top: 10px; padding-bottom: 20px; height: 100%">
+
+            <div class="row" id="logframe" style="display: block">
+                <div style="padding-right: 20px; padding-left: 20px;">
+                </div>
+            </div>
+            <div class="row" style="height: 10px"></div>
+            <div class="row" style="padding-left: 20px; width: 100%">
+                <div class="column" align="left" style="width: 50%;">
+                    <button id="importbutton" class="btn btn-default" onclick="importData()" style="margin-right: 20px"
+                            disabled="true">Import Data
+                    </button>
+                    <button class="btn btn-default"
+                            onclick="showReturnModal()"
+                            style="margin-right: 20px">Get Skipped Rows
+                    </button>
+                </div>
+                <progress id="progress" value="0" max="100" style="width: 300px; height: 30px">
+                </progress>
+                <div class="column" align="right" style="width: 50%">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="width: 100%; height: 0; margin-top: 120px">
+
+</div>
+
+<div class="logbuttonbox">
+    <button id="logbutton" class="navbutton" onclick="togglelog()">
+        LOG
+        <span class="glyphicon glyphicon-triangle-right"></span>
+    </button>
+</div>
+
+<div class="logbox" id="logbox" style="visibility: hidden">
+    <div class="column" style="width: 80%">
+       <textarea id="log" readonly style="width: 100%; height: 100%; resize: none;">
+    </textarea>
+    </div>
+    <div class="column" style="width: 20%">
+
+    </div>
+</div>
+
+
+<div class="modal modal-wide fade" id="dialog" role="dialog">
+    <div class="modal-dialog" style="width: 1400px">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #00AAFF">
+                <b class="headertext" style="color: white; font-size: 20px"></b>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer" id="indexfooter">
+                <button type="button" class="btn btn-default" onclick="createThing()"></button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/bootstrap-notify.js"></script>
+<script src="js/returnRows.js"></script>
+<script src="js/ChooseSource.js"></script>
+<script src="js/MainWindow.js"></script>
+<script src="js/generalFunctions.js"></script>
+<script src="js/thing.js"></script>
+<script src="js/datastream.js"></script>
+<script src="js/sensor.js"></script>
+<script src="js/location.js"></script>
+<script src="js/obsprop.js"></script>
+<script src="js/mapping.js"></script>
+<script src="js/index.js"></script>
+</body>
+</html>

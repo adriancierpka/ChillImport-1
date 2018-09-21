@@ -1,0 +1,260 @@
+* {
+    box-sizing: border-box;
+}
+
+button {
+    width: 140px;
+}
+
+.bigbutton {
+    background-color: #00AAFF;
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    width: 48%;
+    height: 50px;
+
+    float: left;
+}
+
+.navbutton {
+    background-color: darkblue;
+    color: white;
+
+    border: none;
+    outline: none;
+    display: inline-block;
+    cursor: pointer;
+    height: 100%;
+}
+
+.navbutton:hover {
+    background-color: #00AAFF;
+    color: darkblue;
+}
+
+body {
+    background-color: white;
+}
+
+.streamtable {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.topspace {
+    margin-top: 10px;
+}
+
+.middleColumn {
+    align-self: center;
+    width: 820px;
+    height: 100%;
+}
+
+.column {
+    float: left;
+
+    height: 100%;
+}
+
+.rowChoose {
+    height: 200px
+}
+
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.modal.modal-wide .modal-dialog {
+    width: 90%;
+}
+
+.modal-wide .modal-body {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.datastream {
+    height: 150px;
+    width: auto;
+    padding-right: 15px;
+    display: inline-block;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* Style the buttons that are used to open and close the accordion panel */
+.accordion {
+    background-color: #00AAFF;
+    color: white;
+    /*cursor: pointer;*/
+    /*padding: 18px;*/
+    width: 100%;
+    text-align: left;
+    border: none;
+    outline: none;
+    height: 60px;
+}
+
+.accpadding {
+    padding: 18px;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .accordion:hover {
+    background-color: #00AAFF;
+}
+
+/* Style the accordion panel. Note: hidden by default */
+.panel {
+    background-color: whitesmoke;
+    display: none; /* nur für testzwecke*/
+    overflow: hidden;
+}
+
+.panelpadding {
+    padding-left: 18px;
+    padding-bottom: 18px;
+    padding-right: 18px;
+}
+
+.panelbluebox {
+    background-color: #00AAFF;
+    width: 100%;
+}
+
+.righttooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.righttooltip .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    top: -5px;
+    left: 180%;
+
+}
+
+.righttooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 35%;
+    left: -4%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent #555 transparent transparent;
+}
+
+.righttooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+.table-container {
+    display: inline-block;
+    padding-top: 3em;
+    position: relative;
+}
+
+.table-container > div {
+    position: absolute;
+    top: 0;
+}
+
+.fixed_header {
+    display: block;
+    height: 150px;
+    overflow-y: auto;
+}
+
+.fixed_header th > div {
+    position: absolute;
+    top: 10px;
+}
+
+.leftlogbox {
+    width: 300px;
+    background-color: darkblue;
+    left: 10px;
+    top: 70px;
+    position: sticky;
+    margin-top: 10px;
+    z-index: 1;
+    padding: 5px;
+}
+
+.leftlogbox + * {
+    margin-top: -450px;
+}
+
+.mynavbar {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.logbuttonbox {
+    position: fixed;
+    bottom: 0;
+    z-index: 1;
+
+    height: 70px;
+    width: min-content;
+    margin: 25px;
+}
+
+.logbox {
+    background-color: darkblue;
+    padding: 10px;
+    align-content: center;
+    position: fixed;
+    left: 50%;
+    bottom: 0;
+    z-index: 1;
+
+    margin-top: -120px;
+    height: 120px;
+
+    width: 900px;
+    margin-left: -450px;
+}
+
+.loginfo {
+    color: red;
+    position: fixed;
+    z-index: 2;
+}
+
+.questionmark {
+    font-style: normal;
+}
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+}
+
+.previewtable td, th {
+    min-width: 120px;
+}

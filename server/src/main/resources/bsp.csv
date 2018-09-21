@@ -1,0 +1,9 @@
+# column number, station id, datetime, humidityvalue;;;
+# Here the target Datastream has to be mapped from the station id.;;;
+# Also note the missing time for midnight;;;
+"   ,""IDSTAZIONE"",""DATAORA"",""VALORE""";;;
+1;65;01/08/1993 01:00:00;45,000
+2;65;01/08/1993 02:00:00;42,000
+3;65;01/08/1993 03:00:00;48,000
+4;65;01/08/1993 04:00:00;51,000
+5;65;01/08/1993 05:00:00;57,000
