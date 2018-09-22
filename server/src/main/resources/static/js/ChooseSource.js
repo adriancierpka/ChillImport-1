@@ -105,14 +105,6 @@ function uploadUrl() {
 
 function preview() {
     $('#previewbutton').prop('disabled',true);
-    /*
-    var name;
-    if ($('input[name=source]:eq(0)').is(':checked')) {
-        name = $('#file').val().split('\\').pop();
-    } else if ($('input[name=source]:eq(1)').is(':checked')) {
-        name = $('#sourceinput').val().split('/').pop();
-    }
-    */
 
     $.ajax({
         type: 'GET',
@@ -128,62 +120,10 @@ function preview() {
         },
         error: function (e) {
             addToLog(e.responseText);
+            $('#previewbutton').prop('disabled',false);
         }
     });
-
-    /*
-    if ($('input[name=source]:eq(0)').is(':checked')) {
-        previewFile();
-    } else if ($('input[name=source]:eq(1)').is(':checked')) {
-        previewUrl();
-    }
-    */
 }
-
-/*
-function previewFile() {
-
-    var form = $('#uploader')[0];
-
-    var data = new FormData(form);
-
-    $.ajax({
-        type: "POST",
-        enctype: 'multipart/form-data',
-        url: "filepreview",
-        data: data,
-        processData: false,
-        contentType: false,
-        cache: false,
-        success: function (e) {
-            loadPreview(e);
-        },
-        error: function (e) {
-            addToLog(e.responseText);
-        }
-    });
-
-    return false;
-}
-
-function previewUrl() {
-    $.ajax({
-        type: "POST",
-        url: "websitepreview",
-        data: {s: $('#sourceinput').val()},
-        statusCode: {
-            '200': function (e) {
-                loadPreview(e);
-            },
-            '500': function (e) {
-                addToLog(e.responseText);
-            }
-        }
-    });
-
-    return false;
-}
-*/
 
 function loadPreview(values) {
     var tablebody = $('#previewTable').find('tbody:eq(0)');
