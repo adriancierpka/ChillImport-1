@@ -120,7 +120,7 @@ public class ImportController {
         } catch (IOException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Too many header lines. File is not that large.", HttpStatus.NOT_FOUND);
         }
 
         return new ResponseEntity<>(firstThreeRowsOfTable, HttpStatus.OK);
