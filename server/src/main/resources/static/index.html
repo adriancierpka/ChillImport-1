@@ -161,7 +161,7 @@
                         <div>
                             <label>1: Delimiter:</label>
                             <div class="righttooltip"><span class="glyphicon glyphicon-question-sign"></span>
-                                <div class="tooltiptext">Columns are separated by a delimiter</div>
+                                <div class="tooltiptext">Specify the character(s) seperating the columns in your file. Can be any alphanumeric character or valid regular expression. If field is empty or invalid, '\n' is used as delimiter.</div>
                             </div>
                             <br>
                             <input size="4" type="text" id="delimiter" name="delimiter" value=";" onkeyup="changedDelimiter(this.value)">
@@ -173,7 +173,7 @@
                         <div class="topspace">
                             <label>2: Number of header lines:</label>
                             <div class="righttooltip"><span class="glyphicon glyphicon-question-sign"></span>
-                                <div class="tooltiptext">Number of the first lines to be ignored</div>
+                                <div class="tooltiptext">Number of lines at the beginning of your file to be ignored. Can be any non-negative number up to 9999. If field is empty or contains invalid string, software uses 0.</div>
                             </div>
                             <br>
                             <input size="4" type="text" id="headerlines" name="headerlines" value="0" onkeyup="changedHeaderLines(this.value)">
