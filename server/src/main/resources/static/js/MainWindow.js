@@ -67,35 +67,155 @@ function loadConfigs() {
  */
 function saveConfig() {
 
-    var cfgName = prompt('Name of Configuration:');
-    if (cfgName === null) {
-        return;
-    }
-    if (cfgName === "") {
-        addToLog("A configuration needs a name");
-        return;
-    }
+    var currentInput;
+    var parsed;
+    var stop = false;
+
     var date = [];
     $('#timeTable').find('tbody tr').each(function () {
         var obj = {},
             $td = $(this).find('td');
-        obj["string"] = $td.eq(1).find("input").val();
-        obj["column"] = parseInt($td.eq(0).find("input").val());
+        currentInput = $td.eq(1).find("input").val();
+        if (currentInput === null || currentInput === "") {
+            $.notify({
+                message: 'Please specify the date format (no empty strings allowed).'
+            },{
+                type: 'info',
+                placement: {
+                    from: "top",
+                    align: "left"
+                },
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                }
+            });
+            stop = true;
+            return false;
+        }
+        obj["string"] = currentInput;
+        currentInput = $td.eq(0).find("input").val();
+        if (currentInput === null || currentInput === "") {
+            $.notify({
+                message: 'Please specify the column where the date can be found (no empty field allowed) before saving the configuration.'
+            },{
+                type: 'info',
+                placement: {
+                    from: "top",
+                    align: "left"
+                },
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                }
+            });
+            stop = true;
+            return false;
+        }
+        parsed = parseInt(currentInput, 10);
+
+        if (!(currentInput == parsed) || parsed < 0) {
+            $.notify({
+                message: 'Please specify the column where the date can be found (must be a non-negative number) before saving the configuration.'
+            },{
+                type: 'info',
+                placement: {
+                    from: "top",
+                    align: "left"
+                },
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                }
+            });
+            stop = true;
+            return false;
+        }
+        obj["column"] = parsed;
         date.push(obj);
     });
+
+    if (stop === true) {
+        return false;
+    }
 
     var streams = [];
     $('#datastreams').find('.datastream').each(function () {
         var obj = {},
             obs = [];
+        currentInput = $(this).find('select option:selected').val();
+        if (currentInput === null || currentInput === "") {
+            $.notify({
+                message: 'Please leave no datastream empty.'
+            },{
+                type: 'info',
+                placement: {
+                    from: "top",
+                    align: "left"
+                },
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                }
+            });
+            stop = true;
+            return false;
+        }
         obj['dsID'] = JSON.parse($(this).find('select option:selected').attr('data-value')).frostId;
         $(this).find('tbody tr').each(function () {
-            obs.push(parseInt($(this).find('td:eq(1) input').val()));
+            currentInput = $(this).find('td:eq(1) input').val();
+            if (currentInput === null || currentInput === "") {
+                $.notify({
+                    message: 'Please specify the column where the observations of each datastream can be found (no empty field allowed) before saving the configuration.'
+                },{
+                    type: 'info',
+                    placement: {
+                        from: "top",
+                        align: "left"
+                    },
+                    animate: {
+                        enter: 'animated fadeInDown',
+                        exit: 'animated fadeOutUp'
+                    }
+                });
+                stop = true;
+                return false;
+            }
+
+
+            parsed = parseInt(currentInput, 10);
+
+            if (!(currentInput == parsed) || parsed < 0) {
+                $.notify({
+                    message: 'Please specify the column where the observations of each datastream can be found (must be a non-negative number) before saving the configuration.'
+                }, {
+                    type: 'info',
+                    placement: {
+                        from: "top",
+                        align: "left"
+                    },
+                    animate: {
+                        enter: 'animated fadeInDown',
+                        exit: 'animated fadeOutUp'
+                    }
+                });
+                stop = true;
+                return false;
+            }
+            obs.push(parsed);
         });
+        if (stop === true) {
+            return false;
+        }
+
         obj['observations'] = obs;
         obj['multiStream'] = (obs.length > 1);
         streams.push(obj);
     });
+
+    if (stop === true) {
+        return false;
+    }
 
     var filetype = null;
     if ($('input[name=source]:eq(0)').is(':checked')) {
@@ -115,13 +235,69 @@ function saveConfig() {
         }
     }
 
+
+    if ($('#selecttime option:selected').attr('data-value') == null) {
+        $.notify({
+            message: 'Please choose a time zone before saving the configuration.'
+        },{
+            type: 'info',
+            placement: {
+                from: "top",
+                align: "left"
+            },
+            animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp'
+            }
+        });
+        return false;
+    } else if (date.length === 0) {
+        $.notify({
+            message: 'Please specify where to find the date in your file before saving the configuration.'
+        },{
+            type: 'info',
+            placement: {
+                from: "top",
+                align: "left"
+            },
+            animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp'
+            }
+        });
+        return false;
+    } else if (streams.length === 0) {
+        $.notify({
+            message: 'Please add a datastream before saving the configuration.'
+        },{
+            type: 'info',
+            placement: {
+                from: "top",
+                align: "left"
+            },
+            animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp'
+            }
+        });
+        return false;
+    }
+
     var map = mappingData;
 
+    var cfgName = prompt('Name of Configuration:');
+    if (cfgName === null) {
+        return;
+    }
+    if (cfgName === "") {
+        addToLog("A configuration needs a name");
+        return;
+    }
 
     var formData = {
         name: cfgName,
-        delimiter: $('#delimiter').val(),
-        numberOfHeaderlines: parseInt($('#headerlines').val()),
+        delimiter: currentDelimiter,
+        numberOfHeaderlines: parseInt(currentHeaderLines),
         timezone: $('#selecttime option:selected').attr('data-value'),
         dateTime: date,
         streamData: streams,
@@ -443,27 +619,150 @@ function importData() {
         name = $('#sourceinput').val().split('/').pop();
     }
 
+    var currentInput;
+    var parsed;
+    var stop = false;
     var cfgName = "temp";
     var date = [];
     $('#timeTable').find('tbody tr').each(function () {
         var obj = {},
             $td = $(this).find('td');
-        obj["string"] = $td.eq(1).find("input").val();
-        obj["column"] = parseInt($td.eq(0).find("input").val());
+        currentInput = $td.eq(1).find("input").val();
+        if (currentInput === null || currentInput === "") {
+            $.notify({
+                message: 'Please specify the date format (no empty strings allowed).'
+            },{
+                type: 'info',
+                placement: {
+                    from: "top",
+                    align: "left"
+                },
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                }
+            });
+            stop = true;
+            return false;
+        }
+        obj["string"] = currentInput;
+        currentInput = $td.eq(0).find("input").val();
+        if (currentInput === null || currentInput === "") {
+            $.notify({
+                message: 'Please specify the column where the date can be found (no empty field allowed) before importing data.'
+            },{
+                type: 'info',
+                placement: {
+                    from: "top",
+                    align: "left"
+                },
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                }
+            });
+            stop = true;
+            return false;
+        }
+        parsed = parseInt(currentInput, 10);
+        if (!(currentInput == parsed) || parsed < 0) {
+            $.notify({
+                message: 'Please specify the column where the date can be found (must be a non-negative number) before importing data.'
+            },{
+                type: 'info',
+                placement: {
+                    from: "top",
+                    align: "left"
+                },
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                }
+            });
+            stop = true;
+            return false;
+        }
+        obj["column"] = parsed;
         date.push(obj);
     });
+    if (stop === true) {
+        return false;
+    }
     var streams = [];
     $('#datastreams').find('.datastream').each(function () {
         var obj = {},
             obs = [];
+        currentInput = $(this).find('select option:selected').val();
+        if (currentInput === null || currentInput === "") {
+            $.notify({
+                message: 'Please leave no datastream empty.'
+            },{
+                type: 'info',
+                placement: {
+                    from: "top",
+                    align: "left"
+                },
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                }
+            });
+            stop = true;
+            return false;
+        }
         obj['dsID'] = JSON.parse($(this).find('select option:selected').attr('data-value')).frostId;
         $(this).find('tbody tr').each(function () {
-            obs.push(parseInt($(this).find('td:eq(1) input').val()));
+            currentInput = $(this).find('td:eq(1) input').val();
+            if (currentInput === null || currentInput === "") {
+                $.notify({
+                    message: 'Please specify the column where the observations of each datastream can be found (no empty field allowed) before importing data.'
+                },{
+                    type: 'info',
+                    placement: {
+                        from: "top",
+                        align: "left"
+                    },
+                    animate: {
+                        enter: 'animated fadeInDown',
+                        exit: 'animated fadeOutUp'
+                    }
+                });
+                stop = true;
+                return false;
+            }
+
+            parsed = parseInt(currentInput, 10);
+
+            if (!(currentInput == parsed) || parsed < 0) {
+                $.notify({
+                    message: 'Please specify the column where the observations of each datastream can be found (must be a non-negative number) before importing data.'
+                },{
+                    type: 'info',
+                    placement: {
+                        from: "top",
+                        align: "left"
+                    },
+                    animate: {
+                        enter: 'animated fadeInDown',
+                        exit: 'animated fadeOutUp'
+                    }
+                });
+                stop = true;
+                return false;
+            }
+            obs.push(parsed);
         });
+        if (stop === true) {
+            return false;
+        }
+
         obj['observations'] = obs;
         obj['multiStream'] = (obs.length > 1);
         streams.push(obj);
     });
+    if (stop === true) {
+        return false;
+    }
 
     var filetype = null;
     if ($('input[name=source]:eq(0)').is(':checked')) {
@@ -479,7 +778,7 @@ function importData() {
             filetype = 'EXCEL';
         } else if (filetype !== 'CSV') {
             addToLog("Unknown file type.");
-            return;
+            return false;
         }
     }
 
@@ -488,8 +787,8 @@ function importData() {
 
     var formData = {
         name: cfgName,
-        delimiter: $('#delimiter').val(),
-        numberOfHeaderlines: parseInt($('#headerlines').val()),
+        delimiter: currentDelimiter,
+        numberOfHeaderlines: parseInt(currentHeaderLines),
         timezone: $('#selecttime option:selected').attr('data-value'),
         dateTime: date,
         streamData: streams,
@@ -502,91 +801,111 @@ function importData() {
         config: jsoncfg,
         filename: getCurrentFileName()
     };
-    if (filetype == "EXCEL") {
-        if (date.length == 0 || streams.length == 0 || $('#selecttime option:selected').attr('data-value') == null || isNaN(parseInt($('#headerlines').val()))) {
-            $.notify({
-                message: 'Please fill in all boxes'
-            },{
-                type: 'info'
-            });
-            return;
-        }
+    if ($('#selecttime option:selected').attr('data-value') == null) {
+        $.notify({
+            message: 'Please choose a time zone before importing data.'
+        },{
+            type: 'info',
+            placement: {
+                from: "top",
+                align: "left"
+            },
+            animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp'
+            }
+        });
+        return false;
+    } else if (date.length === 0) {
+        $.notify({
+            message: 'Please specify where to find the date in your file before importing data.'
+        },{
+            type: 'info',
+            placement: {
+                from: "top",
+                align: "left"
+            },
+            animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp'
+            }
+        });
+        return false;
+    } else if (streams.length === 0) {
+        $.notify({
+            message: 'Please add a datastream before importing data.'
+        },{
+            type: 'info',
+            placement: {
+                from: "top",
+                align: "left"
+            },
+            animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp'
+            }
+        });
+        return false;
+    } else {
+
+        $.notify({
+            message: 'Import started'
+        },{
+            type: 'info',
+            allow_dismiss: true,
+            placement: {
+                from: "top",
+                align: "left"
+            },
+            animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp'
+            }
+        });
+        addToLog("Import of File " + name + " started.");
+        document.getElementById("progress").value = 0;
+        id = setInterval(progress, initial);
+        $.ajax({
+            type: 'POST',
+            url: "importQueue",
+            data: mydata,
+            success: function (e) {
+                addToLog(e);
+                $.notify({
+                    message: 'Import finished'
+                },{
+                    type: 'success',
+                    allow_dismiss: true,
+                    placement: {
+                        from: "top",
+                        align: "left"
+                    },
+                    animate: {
+                        enter: 'animated fadeInDown',
+                        exit: 'animated fadeOutUp'
+                    }
+                });
+            },
+            error: function (e) {
+                $.notify({
+                    message: 'Import failed. Check log for errors.'
+                },{
+                    type: 'danger',
+                    allow_dismiss: true,
+                    placement: {
+                        from: "top",
+                        align: "left"
+                    },
+                    animate: {
+                        enter: 'animated fadeInDown',
+                        exit: 'animated fadeOutUp'
+                    }
+                });
+                addToLog(e.responseText);
+                clearInterval(id);
+            }
+        });
     }
-    if (filetype == "CSV") {
-        if ($('#delimiter').val() == null || date.length == 0 || streams.length == 0 || $('#selecttime option:selected').attr('data-value') == null || isNaN(parseInt($('#headerlines').val()))) {
-            $.notify({
-                message: 'Please fill in all boxes'
-            },{
-                type: 'info',
-                placement: {
-                    from: "top",
-                    align: "left"
-                },
-                animate: {
-                    enter: 'animated fadeInDown',
-                    exit: 'animated fadeOutUp'
-                }
-            });
-            return;
-        }
-    }
-    $.notify({
-        message: 'Import started'
-    },{
-        type: 'info',
-        allow_dismiss: true,
-        placement: {
-            from: "top",
-            align: "left"
-        },
-        animate: {
-            enter: 'animated fadeInDown',
-            exit: 'animated fadeOutUp'
-        }
-    });
-    addToLog("Import of File " + name + " started.");
-    document.getElementById("progress").value = 0;
-    id = setInterval(progress, initial);
-    $.ajax({
-        type: 'POST',
-        url: "importQueue",
-        data: mydata,
-        success: function (e) {
-            addToLog(e);
-            $.notify({
-                message: 'Import finished'
-            },{
-                type: 'success',
-                allow_dismiss: true,
-                placement: {
-                    from: "top",
-                    align: "left"
-                },
-                animate: {
-                    enter: 'animated fadeInDown',
-                    exit: 'animated fadeOutUp'
-                }
-            });
-        },
-        error: function (e) {
-            $.notify({
-                message: 'Import failed. Check log for errors.'
-            },{
-                type: 'danger',
-                allow_dismiss: true,
-                placement: {
-                    from: "top",
-                    align: "left"
-                },
-                animate: {
-                    enter: 'animated fadeInDown',
-                    exit: 'animated fadeOutUp'
-                }
-            });
-            addToLog(e.responseText);
-            clearInterval(id);
-        }
-    });
 }
 
 function progress() {
