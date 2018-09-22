@@ -94,6 +94,7 @@ function saveConfig() {
             $.notify({
                 message: 'Please specify the date format (no empty strings allowed).'
             },{
+                allow_dismiss: true,
                 type: 'info',
                 placement: {
                     from: "top",
@@ -113,6 +114,7 @@ function saveConfig() {
             $.notify({
                 message: 'Please specify the column where the date can be found (no empty field allowed) before saving the configuration.'
             },{
+                allow_dismiss: true,
                 type: 'info',
                 placement: {
                     from: "top",
@@ -132,6 +134,7 @@ function saveConfig() {
             $.notify({
                 message: 'Please specify the column where the date can be found (must be a non-negative number) before saving the configuration.'
             },{
+                allow_dismiss: true,
                 type: 'info',
                 placement: {
                     from: "top",
@@ -162,6 +165,7 @@ function saveConfig() {
             $.notify({
                 message: 'Please leave no datastream empty.'
             },{
+                allow_dismiss: true,
                 type: 'info',
                 placement: {
                     from: "top",
@@ -182,6 +186,7 @@ function saveConfig() {
                 $.notify({
                     message: 'Please specify the column where the observations of each datastream can be found (no empty field allowed) before saving the configuration.'
                 },{
+                    allow_dismiss: true,
                     type: 'info',
                     placement: {
                         from: "top",
@@ -203,6 +208,7 @@ function saveConfig() {
                 $.notify({
                     message: 'Please specify the column where the observations of each datastream can be found (must be a non-negative number) before saving the configuration.'
                 }, {
+                    allow_dismiss: true,
                     type: 'info',
                     placement: {
                         from: "top",
@@ -254,6 +260,7 @@ function saveConfig() {
         $.notify({
             message: 'Please choose a time zone before saving the configuration.'
         },{
+            allow_dismiss: true,
             type: 'info',
             placement: {
                 from: "top",
@@ -269,6 +276,7 @@ function saveConfig() {
         $.notify({
             message: 'Please specify where to find the date in your file before saving the configuration.'
         },{
+            allow_dismiss: true,
             type: 'info',
             placement: {
                 from: "top",
@@ -284,6 +292,7 @@ function saveConfig() {
         $.notify({
             message: 'Please add a datastream before saving the configuration.'
         },{
+            allow_dismiss: true,
             type: 'info',
             placement: {
                 from: "top",
@@ -660,6 +669,7 @@ function importData() {
             $.notify({
                 message: 'Please specify the date format (no empty strings allowed).'
             },{
+                allow_dismiss: true,
                 type: 'info',
                 placement: {
                     from: "top",
@@ -679,6 +689,7 @@ function importData() {
             $.notify({
                 message: 'Please specify the column where the date can be found (no empty field allowed) before importing data.'
             },{
+                allow_dismiss: true,
                 type: 'info',
                 placement: {
                     from: "top",
@@ -697,6 +708,7 @@ function importData() {
             $.notify({
                 message: 'Please specify the column where the date can be found (must be a non-negative number) before importing data.'
             },{
+                allow_dismiss: true,
                 type: 'info',
                 placement: {
                     from: "top",
@@ -725,6 +737,7 @@ function importData() {
             $.notify({
                 message: 'Please leave no datastream empty.'
             },{
+                allow_dismiss: true,
                 type: 'info',
                 placement: {
                     from: "top",

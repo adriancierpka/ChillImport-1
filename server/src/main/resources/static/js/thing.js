@@ -65,6 +65,21 @@ function createThing() {
         contentType: 'application/json',
         data: JSON.stringify(mydata),
         error: function (e) {
+            $.notify({
+                message: 'Thing could not be created, check the Log for errors'
+            }, {
+                allow_dismiss: true,
+                type: 'danger',
+                placement: {
+                    from: "top",
+                    align: "left"
+                },
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                },
+                z_index: 9000
+            });
             addToLog(e.responseText);
         },
         success: function (e) {
