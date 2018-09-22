@@ -13,6 +13,8 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 /**
@@ -22,12 +24,12 @@ import java.util.*;
 public class ErrorHandler {
 
     private static ErrorHandler errorHandler;
-    private List<SkippedRows> skippedRows;
+    private Queue<SkippedRows> skippedRows;
     private String path;
     private String sep = File.separator;
 
     private ErrorHandler() {
-        skippedRows = new LinkedList<>();
+        skippedRows = new ConcurrentLinkedQueue<>();
         path = LogManager.getInstance().getLogPath().replace("Logging.txt", "ErrorLog.txt");
     }
 
@@ -117,7 +119,7 @@ public class ErrorHandler {
     public void returnRows(Table table, Configuration cfg) throws IOException, UnsupportedDataTypeException {
         String date = LogManager.getInstance().getDate();
         Table skipped = new Table();
-        if (skippedRows.size() == 0) {
+        if (skippedRows.isEmpty()) {
             LogManager.getInstance().writeToLog("No rows were skipped", false);
             return;
         }
@@ -126,7 +128,6 @@ public class ErrorHandler {
             if (skip.getRow() != -1) {
                 currentRow = table.getRow(skip.getRow());
                 String msg = (skip.getError().getMessage() == null) ? "null":skip.getError().getMessage();
-
                 currentRow.add(new Cell(msg));
                 skipped.appendRow(currentRow);
             }
