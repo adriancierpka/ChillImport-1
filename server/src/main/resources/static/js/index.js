@@ -1,9 +1,14 @@
 /**
- * Calls preview function after delimiter has been changed.
+ * Calls preview function after delimiter has been changed. Checks delimiter to be a valid regular expression.
  * @param del new value of the delimiter
  */
 function changedDelimiter(del) {
-    currentDelimiter = del;
+    try {
+        new RegExp(del);
+        currentDelimiter = (del === null || del === "") ? '\n' : del;
+    } catch(e) {
+        currentDelimiter = '\n';
+    }
     preview();
 }
 
@@ -12,7 +17,11 @@ function changedDelimiter(del) {
  * @param lines new number of header lines
  */
 function changedHeaderLines(lines) {
-    currentHeaderLines = (lines) ? lines : 0;
+    if (/^0*[0-9]{1,4}$/.test(lines)){
+        currentHeaderLines = lines;
+    } else {
+        currentHeaderLines = 0;
+    }
     preview();
 }
 
