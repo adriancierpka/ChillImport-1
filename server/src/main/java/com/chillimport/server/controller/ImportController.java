@@ -191,20 +191,22 @@ public class ImportController {
         } catch (URISyntaxException e) {
             String msg = "Server address malformed (URISyntaxException).";
             logManager.writeToLog(msg, true);
-            errorHandler.addRows(0, e);
+            e.printStackTrace();
             return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (MalformedURLException e) {
             String msg = "Server address malformed (MalformedURLException).";
             logManager.writeToLog(msg, true);
-            errorHandler.addRows(0, e);
+            e.printStackTrace();
             return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (ConverterException e) {
             String msg = "The file converter failed to convert the given file into internal table representation (usually due to wrong file format or empty file).";
             logManager.writeToLog(msg, true);
+            e.printStackTrace();
             return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IOException e) {
             String msg = "Could not write into ReturnFile (IOException in ErrorHandler.returnRows), windows-only.";
             logManager.writeToLog(msg, true);
+            e.printStackTrace();
             return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (UnsupportedDataTypeException e) {
             logManager.writeToLog("Unknown File type", true);
@@ -212,16 +214,17 @@ public class ImportController {
         } catch (IndexOutOfBoundsException e) {
             String msg = "Some Index is out of bounds (probably either wrong number of header lines or a column number in the configuration is too large).";
             logManager.writeToLog(msg, true);
+            e.printStackTrace();
             return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (NullPointerException e) {
             String msg = "Null Pointer Exception";
             logManager.writeToLog(msg, true);
-            errorHandler.addRows(-1, e);
+            e.printStackTrace();
             return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
             String msg = "Unknown exception";
             logManager.writeToLog(msg, true);
-            errorHandler.addRows(-1, e);
+            e.printStackTrace();
             return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
         } finally {
             CompletableFuture.runAsync(() -> nextInQueue(filename));
