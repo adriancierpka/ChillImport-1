@@ -71,6 +71,20 @@ function saveConfig() {
     var parsed;
     var stop = false;
 
+    try {
+        new RegExp(currentDelimiter);
+        if (currentDelimiter === null || currentDelimiter === "") {
+            currentDelimiter = '\n';
+        }
+    } catch(e) {
+        currentDelimiter = '\n';
+    }
+
+    if (!/^0*[0-9]{1,4}$/.test(currentHeaderLines)){
+        currentHeaderLines = 0;
+    }
+
+
     var date = [];
     $('#timeTable').find('tbody tr').each(function () {
         var obj = {},
@@ -617,6 +631,20 @@ function importData() {
         name = $('#file').val().split('\\').pop();
     } else if ($('input[name=source]:eq(1)').is(':checked')) {
         name = $('#sourceinput').val().split('/').pop();
+    }
+
+
+    try {
+        new RegExp(currentDelimiter);
+        if (currentDelimiter === null || currentDelimiter === "") {
+            currentDelimiter = '\n';
+        }
+    } catch(e) {
+        currentDelimiter = '\n';
+    }
+
+    if (!/^0*[0-9]{1,4}$/.test(currentHeaderLines)){
+        currentHeaderLines = 0;
     }
 
     var currentInput;
