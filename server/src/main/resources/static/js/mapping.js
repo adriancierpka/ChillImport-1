@@ -19,6 +19,7 @@ function saveMapping() {
     $.notify({
         message: 'Mapping saved.'
     },{
+        allow_dismiss:true,
         type: 'info',
         placement: {
             from: "top",
@@ -29,6 +30,7 @@ function saveMapping() {
             exit: 'animated fadeOutUp'
         }
     });
+    addToLog('Mapping saved.');
     closeModal('dialog');
 }
 

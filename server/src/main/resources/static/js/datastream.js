@@ -141,7 +141,21 @@ function createDS() {
             addToLog(response.responseText);
         },
         success: function (e) {
-            addToLog("Datastream created.");
+            $.notify({
+                message: 'Datastream created.'
+            },{
+                allow_dismiss:true,
+                type: 'info',
+                placement: {
+                    from: "top",
+                    align: "left"
+                },
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                }
+            });
+            addToLog('Datastream created.');
             closeModal('dialog');
 
             var text = e.name + ' (' + e.frostId + ')';

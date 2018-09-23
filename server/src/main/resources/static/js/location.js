@@ -36,7 +36,22 @@ function createLocation() {
                 addToLog(e.responseText);
             },
             success: function (e) {
-                addToLog("Location created.");
+                $.notify({
+                    message: 'Location created.'
+                },{
+                    allow_dismiss:true,
+                    type: 'info',
+                    placement: {
+                        from: "top",
+                        align: "left"
+                    },
+                    animate: {
+                        enter: 'animated fadeInDown',
+                        exit: 'animated fadeOutUp'
+                    },
+                    z_index: 9000
+                });
+                addToLog('Location created.');
                 closeModal('thingdialog');
 
                 var text = e.name + ' (' + e.frostId + ')';

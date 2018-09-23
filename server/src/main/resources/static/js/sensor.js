@@ -68,6 +68,21 @@ function createSensor() {
             addToLog(e.responseText);
         },
         success: function (e) {
+            $.notify({
+                message: 'Sensor created.'
+            },{
+                allow_dismiss:true,
+                type: 'info',
+                placement: {
+                    from: "top",
+                    align: "left"
+                },
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                },
+                z_index: 9000
+            });
             addToLog('Sensor created.');
             closeModal('dsdialog');
 

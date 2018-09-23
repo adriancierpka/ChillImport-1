@@ -36,6 +36,21 @@ function createObsprop() {
             addToLog(e.responseText);
         },
         success: function (e) {
+            $.notify({
+                message: 'Observed Property created.'
+            },{
+                allow_dismiss:true,
+                type: 'info',
+                placement: {
+                    from: "top",
+                    align: "left"
+                },
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                },
+                z_index: 9000
+            });
             addToLog('Observed Property created.');
             closeModal('dsdialog');
             getOprops();
