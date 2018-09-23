@@ -32,8 +32,8 @@ function sourceserver() {
 }
 
 function upload() {
-    $('#previewbutton').prop('disabled',true);
-    $('#importbutton').prop('disabled',true);
+    $('#previewbutton').prop('disabled', true);
+    $('#importbutton').prop('disabled', true);
     if ($('input[name=source]:eq(0)').is(':checked')) {
         uploadFile();
     } else if ($('input[name=source]:eq(1)').is(':checked')) {
@@ -55,19 +55,42 @@ function uploadFile() {
         contentType: false,
         cache: false,
         success: function (e) {
-            var pattern = /!.*/;
-            if(pattern.test(e)) {
-                //message
-                addToLog(e);
-            } else {
-                //new filename
-                currentFileName = e;
-            }
-            $('#importbutton').prop('disabled',false);
+            $.notify({
+                message: 'File has been uploaded'
+            }, {
+                allow_dismiss: true,
+                type: 'success',
+                placement: {
+                    from: "top",
+                    align: "left"
+                },
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                },
+                z_index: 9000
+            });
+            currentFileName = e;
+            $('#importbutton').prop('disabled', false);
             addToLog("Finished processing file. Ready for import.");
             preview();
         },
         error: function (e) {
+            $.notify({
+                message: 'File could not be uploaded. Check Log for errors'
+            }, {
+                allow_dismiss: true,
+                type: 'danger',
+                placement: {
+                    from: "top",
+                    align: "left"
+                },
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                },
+                z_index: 9000
+            });
             addToLog(e.responseText);
         }
     });
@@ -80,23 +103,44 @@ function uploadUrl() {
         type: "POST",
         url: "uploadFromUrl",
         data: {url: $('#sourceinput').val()},
-        statusCode: {
-            '200': function (e) {
-                if(pattern.test(e)) {
-                    //message
-                    addToLog(e);
-                } else {
-                    //new filename
-                    currentFileName = e;
-                }
-                $('#importbutton').prop('disabled',false);
+        success: function (e) {
+            $.notify({
+                message: 'File has been uploaded'
+            }, {
+                allow_dismiss: true,
+                type: 'success',
+                placement: {
+                    from: "top",
+                    align: "left"
+                },
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                },
+                z_index: 9000
+            });
+                $('#importbutton').prop('disabled', false);
                 addToLog("Finished processing file. Ready for import.");
                 preview();
             },
-            '500': function (e) {
+        error: function(e) {
+            $.notify({
+                message: 'File could not be uploaded. Check Log for errors'
+            }, {
+                allow_dismiss: true,
+                type: 'danger',
+                placement: {
+                    from: "top",
+                    align: "left"
+                },
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                },
+                z_index: 9000
+            });
                 addToLog(e.responseText);
             }
-        }
     });
 
     return false;
@@ -104,7 +148,7 @@ function uploadUrl() {
 
 
 function preview() {
-    $('#previewbutton').prop('disabled',true);
+    $('#previewbutton').prop('disabled', true);
 
     $.ajax({
         type: 'GET',
@@ -116,11 +160,11 @@ function preview() {
         },
         success: function (result) {
             loadPreview(result);
-            $('#previewbutton').prop('disabled',false);
+            $('#previewbutton').prop('disabled', false);
         },
         error: function (e) {
             addToLog(e.responseText);
-            $('#previewbutton').prop('disabled',false);
+            $('#previewbutton').prop('disabled', false);
         }
     });
 }
@@ -131,13 +175,13 @@ function loadPreview(values) {
     tablehead.empty().append($('<tr>'));
     tablebody.empty();
     var rows = values.length;
-    if(rows > 0) {
+    if (rows > 0) {
         var columns = values[0].length;
     }
-    for (var i= 0; i< rows; i++){
+    for (var i = 0; i < rows; i++) {
         tablebody.append($('<tr>'));
         var current = tablebody.find('tr').last();
-        for (var j = 0; j<columns;j++) {
+        for (var j = 0; j < columns; j++) {
             current.append($('<td>')
                 .text(values[i][j])
             );
@@ -145,7 +189,7 @@ function loadPreview(values) {
     }
 
     current = tablehead.find('tr').last();
-    for(var k = 0;k<columns;k++) {
+    for (var k = 0; k < columns; k++) {
         current.append($('<th>')
             .text('Column ' + k)
         );
@@ -158,18 +202,18 @@ function loadPreview(values) {
  */
 function checkinputfile() {
     var name = $('#file').val().split(/(\\|\/)/g).pop();
-    if(name.match(".*\.csv$")) {
-        $('#oksource').attr('disabled',false);
+    if (name.match(".*\.csv$")) {
+        $('#oksource').attr('disabled', false);
         isCsv = true;
         isExcel = false;
-    } else if(name.match(".*\.xlsx?$")) {
-        $('#oksource').attr('disabled',false);
+    } else if (name.match(".*\.xlsx?$")) {
+        $('#oksource').attr('disabled', false);
         isCsv = false;
         isExcel = true;
     } else {
         isExcel = false;
         isCsv = false;
-        $('#oksource').attr('disabled',true);
+        $('#oksource').attr('disabled', true);
     }
 }
 
@@ -183,11 +227,11 @@ function checkinputurl() {
     if (pattern.test(url)) {
         isExcel = false;
         isCsv = false;
-        $('#oksource').attr('disabled',false);
+        $('#oksource').attr('disabled', false);
     } else {
         isExcel = false;
         isCsv = false;
-        $('#oksource').attr('disabled',true);
+        $('#oksource').attr('disabled', true);
     }
 
 
@@ -224,13 +268,13 @@ function csvconfig() {
  * removes "disabled" if source is a csv
  */
 function optimzeforsource() {
-   if (isCsv && isExcel) {
-       addToLog("Unexpected source");
-   } else if (isExcel && !isCsv) {
-       excelconfig();
-   } else if (isCsv && !isExcel) {
-       csvconfig();
-   } else {
-       csvconfig();
-   }
+    if (isCsv && isExcel) {
+        addToLog("Unexpected source");
+    } else if (isExcel && !isCsv) {
+        excelconfig();
+    } else if (isCsv && !isExcel) {
+        csvconfig();
+    } else {
+        csvconfig();
+    }
 }

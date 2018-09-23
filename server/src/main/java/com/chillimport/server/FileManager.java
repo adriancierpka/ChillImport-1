@@ -12,6 +12,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.*;
+import java.time.ZonedDateTime;
 
 
 @Service
@@ -44,16 +45,15 @@ public class FileManager {
      */
     public String store(MultipartFile file) throws FileStorageException {
         String origFilename = StringUtils.cleanPath(file.getOriginalFilename());
-        String[] cutted = origFilename.split("\\.");
+        String[] cut = origFilename.split("\\.");
 
-        if (cutted.length < 2) {
+        if (cut.length < 2) {
             throw new FileStorageException("Illegal file name");
         }
 
-        String ending = cutted[cutted.length - 1];
+        String ending = cut[cut.length - 1];
 
-        String randomFilename = LogManager.getInstance().getDate().replaceAll("\\.", "_") + '.' + ending;
-
+        String randomFilename = ZonedDateTime.now().toString().substring(0, 23).replaceAll(":", "-").replaceAll("\\.", "_") + '.' + ending;
         try {
             if (file.isEmpty()) {
                 throw new FileStorageException("Failed to store, file " + randomFilename + " is empty.");

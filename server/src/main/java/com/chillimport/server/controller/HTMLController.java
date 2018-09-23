@@ -49,6 +49,7 @@ public class HTMLController {
         try {
             firstThreeRowsOfTable = UploadHandler.preview(file, sampleConfig);
         } catch (IOException e) {
+            ErrorHandler.getInstance().addRows(-1,e);
             return new ResponseEntity<>("Failed to convert file", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -71,12 +72,15 @@ public class HTMLController {
             return InetAddress.getByName(FileManager.getServerURL().getHost()).isReachable(6000);
         } catch (UnknownHostException e) {
             LogManager.getInstance().writeToLog("Server not reachable", true);
+            ErrorHandler.getInstance().addRows(-1,e);
             return false;
         } catch (MalformedURLException e) {
             LogManager.getInstance().writeToLog("Server address malformed", true);
+            ErrorHandler.getInstance().addRows(-1,e);
             return false;
         } catch (IOException e) {
             LogManager.getInstance().writeToLog("Internet connection offline", true);
+            ErrorHandler.getInstance().addRows(-1,e);
             return false;
         }
     }

@@ -9,13 +9,9 @@ import com.chillimport.server.errors.ErrorHandler;
 import com.chillimport.server.errors.LogManager;
 import com.chillimport.server.utility.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import de.fraunhofer.iosb.ilt.sta.ServiceFailureException;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -118,8 +114,10 @@ public class ImportController {
         try {
             firstThreeRowsOfTable = UploadHandler.preview(file, sampleConfig);
         } catch (IOException e) {
+            ErrorHandler.getInstance().addRows(-1,e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (NoSuchElementException e) {
+            ErrorHandler.getInstance().addRows(-1,e);
             return new ResponseEntity<>("Too many header lines. File is not that large.", HttpStatus.NOT_FOUND);
         }
 
@@ -192,21 +190,25 @@ public class ImportController {
             String msg = "Server address malformed (URISyntaxException).";
             logManager.writeToLog(msg, true);
             e.printStackTrace();
+            errorHandler.addRows(-1,e);
             return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (MalformedURLException e) {
             String msg = "Server address malformed (MalformedURLException).";
             logManager.writeToLog(msg, true);
             e.printStackTrace();
+            errorHandler.addRows(-1, e);
             return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (ConverterException e) {
             String msg = "The file converter failed to convert the given file into internal table representation (usually due to wrong file format or empty file).";
             logManager.writeToLog(msg, true);
             e.printStackTrace();
+            errorHandler.addRows(-1, e);
             return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IOException e) {
             String msg = "Could not write into ReturnFile (IOException in ErrorHandler.returnRows), windows-only.";
             logManager.writeToLog(msg, true);
             e.printStackTrace();
+            errorHandler.addRows(-1, e);
             return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (UnsupportedDataTypeException e) {
             logManager.writeToLog("Unknown File type", true);
@@ -215,21 +217,25 @@ public class ImportController {
             String msg = "Some Index is out of bounds (probably either wrong number of header lines or a column number in the configuration is too large).";
             logManager.writeToLog(msg, true);
             e.printStackTrace();
+            errorHandler.addRows(-1, e);
             return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (NullPointerException e) {
             String msg = "Null Pointer Exception";
             logManager.writeToLog(msg, true);
             e.printStackTrace();
+            errorHandler.addRows(-1, e);
             return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
             String msg = "Unknown exception";
             logManager.writeToLog(msg, true);
             e.printStackTrace();
+            errorHandler.addRows(-1, e);
             return new ResponseEntity<>(msg, HttpStatus.INTERNAL_SERVER_ERROR);
         } finally {
             CompletableFuture.runAsync(() -> nextInQueue(filename));
         }
-        return new ResponseEntity<>("Finished import of file " + filename, HttpStatus.OK);
+        return new ResponseEntity<>("Finished import of file " + filename + "." + ErrorHandler.getInstance().returnSize() + " Rows were skipped",
+                                    HttpStatus.OK);
     }
 
 
