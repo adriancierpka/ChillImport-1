@@ -76,21 +76,7 @@ function getSensor() {
 }
 
 function createDS() {
-    $.notify({
-        message: 'Datastream could not be created, check the Log for errors'
-    }, {
-        allow_dismiss: true,
-        type: 'danger',
-        placement: {
-            from: "top",
-            align: "left"
-        },
-        animate: {
-            enter: 'animated fadeInDown',
-            exit: 'animated fadeOutUp'
-        },
-        z_index: 9000
-    });
+
     var $rows = $('#streamUnits').find('tbody tr');
     var types = [],
         units = [],
