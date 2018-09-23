@@ -8,7 +8,7 @@ function returnRows() {
             var files = JSON.parse(response);
             var $x = $('#select');
             path = files[files.length - 1];
-            for (var i = 0; i < files.length - 1; i++) {
+            for (var i = 0; i < files.length; i++) {
                 var lul = files[i];
                 $x.append("<option value =" + lul + ">" + lul + '</option>');
             }
