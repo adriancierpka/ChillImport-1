@@ -229,7 +229,7 @@ public class ImportController {
         } finally {
             CompletableFuture.runAsync(() -> nextInQueue(filename));
         }
-        return new ResponseEntity<>("Finished import of file " + filename, HttpStatus.OK);
+        return new ResponseEntity<>("Finished import of file " + filename + "." + ErrorHandler.getInstance().returnSize() + " Rows were skipped", HttpStatus.OK);
     }
 
 

@@ -150,6 +150,9 @@ public class ErrorHandler {
         }
     }
 
+    public int returnSize() {
+        return skippedRows.size();
+    }
     /**
      * Clean up at the end of Upload
      */
