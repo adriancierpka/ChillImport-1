@@ -54,7 +54,6 @@ public class FileManager {
         String ending = cut[cut.length - 1];
 
         String randomFilename = ZonedDateTime.now().toString().substring(0, 23).replaceAll(":", "-").replaceAll("\\.", "_") + '.' + ending;
-        System.out.println(randomFilename);
         try {
             if (file.isEmpty()) {
                 throw new FileStorageException("Failed to store, file " + randomFilename + " is empty.");
