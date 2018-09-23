@@ -12,8 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.ArrayList;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 
@@ -125,9 +125,9 @@ public class ErrorHandler {
         }
         ArrayList<Cell> currentRow;
         for (SkippedRows skip : skippedRows) {
-            if (skip.getRow() != -1) {
+            if (skip.getRow() != -1) { // -1 kann als genereller Fehlercode genutzt werden
                 currentRow = table.getRow(skip.getRow());
-                String msg = (skip.getError().getMessage() == null) ? "null":skip.getError().getMessage();
+                String msg = (skip.getError().getMessage() == null) ? "null" : skip.getError().getMessage();
                 currentRow.add(new Cell(msg));
                 skipped.appendRow(currentRow);
             }
@@ -153,6 +153,7 @@ public class ErrorHandler {
     public int returnSize() {
         return skippedRows.size();
     }
+    
     /**
      * Clean up at the end of Upload
      */
