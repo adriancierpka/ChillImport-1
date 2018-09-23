@@ -24,7 +24,10 @@ function showStreamModal() {
  * opens the popup to edit the mapping
  */
 function showMappingModal() {
-    $('#indexfooter').find('button:eq(0)').hide();
+    var $modal = $('#indexfooter').find('button:eq(0)');
+    $modal.attr('onclick', 'saveMapping()');
+    $modal.html('Save Mapping');
+    $modal.show();
     modal("dialog", "mapping.html", loadMapping, 'Current\xa0Mapping');
 }
 
