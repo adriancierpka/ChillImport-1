@@ -83,7 +83,21 @@ function createThing() {
             addToLog(e.responseText);
         },
         success: function (e) {
-            addToLog("Thing created.");
+            $.notify({
+                message: 'Thing created.'
+            },{
+                allow_dismiss:true,
+                type: 'info',
+                placement: {
+                    from: "top",
+                    align: "left"
+                },
+                animate: {
+                    enter: 'animated fadeInDown',
+                    exit: 'animated fadeOutUp'
+                }
+            });
+            addToLog('Thing created');
             closeModal('dialog');
 
             var text = e.name + ' (' + e.frostId + ')';

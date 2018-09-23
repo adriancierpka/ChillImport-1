@@ -14,6 +14,24 @@ function saveMapping() {
     });
 
     mappingData = Array.from(obj);
+
+
+    $.notify({
+        message: 'Mapping saved.'
+    },{
+        allow_dismiss:true,
+        type: 'info',
+        placement: {
+            from: "top",
+            align: "left"
+        },
+        animate: {
+            enter: 'animated fadeInDown',
+            exit: 'animated fadeOutUp'
+        }
+    });
+    addToLog('Mapping saved.');
+    closeModal('dialog');
 }
 
 /**
