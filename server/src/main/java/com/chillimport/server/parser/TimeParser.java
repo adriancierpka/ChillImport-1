@@ -85,7 +85,7 @@ public class TimeParser {
         }
 
         if (!zone.startsWith("-")) {
-            zone = "+" + zone; //TODO
+            zone = "+" + zone;
         }
         return ZoneOffset.of(zone);
     }

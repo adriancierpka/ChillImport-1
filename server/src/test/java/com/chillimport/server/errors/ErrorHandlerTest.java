@@ -9,9 +9,7 @@ import org.junit.*;
 import java.io.*;
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 public class ErrorHandlerTest {
@@ -140,7 +138,7 @@ public class ErrorHandlerTest {
     @Test
     public void returnFiles() {
         String x = eh.returnFiles();
-        //assertTrue(x.contains("2018-08-21T15;56;45--skippedRows.csv"));
+        assertTrue(x.contains("2018-08-21T15;56;45--skippedRows.csv"));
         assertTrue(x.contains("2018-08-21T16;33;11--skippedRows.csv"));
         assertTrue(x.contains("2018-08-21T23-34-25--skippedRows.csv"));
 }
