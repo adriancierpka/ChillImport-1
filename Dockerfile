@@ -1,4 +1,5 @@
 FROM java:8
+
 LABEL maintainer = "vercility@gmail.com"
 VOLUME /tmp
 EXPOSE 8000

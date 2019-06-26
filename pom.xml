@@ -112,14 +112,78 @@
                 <groupId>com.spotify</groupId>
                 <artifactId>dockerfile-maven-plugin</artifactId>
                 <version>1.3.6</version>
+				<executions>
+                    <execution>
+                        <id>tag-version</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>tag</goal>
+                        </goals>
+                        <configuration>
+                            <tag>chillimport-${env.TAG}</tag>
+                        </configuration>
+                    </execution>
+					<execution>
+                        <id>tag-hash</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>tag</goal>
+                        </goals>
+                        <configuration>
+                            <tag>chillimport-${env.TRAVIS_COMMIT}</tag>
+                        </configuration>
+                    </execution>
+					<execution>
+                        <id>tag-latest</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>tag</goal>
+                        </goals>
+                        <configuration>
+                            <tag>chillimport-latest</tag>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>push-version</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>push</goal>
+                        </goals>
+                        <configuration>
+                            <tag>chillimport-${env.TAG}</tag>
+                        </configuration>
+                    </execution>
+					<execution>
+                        <id>push-hash</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>push</goal>
+                        </goals>
+                        <configuration>
+                            <tag>chillimport-${env.TRAVIS_COMMIT}</tag>
+                        </configuration>
+                    </execution>
+					<execution>
+                        <id>push-latest</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>push</goal>
+                        </goals>
+                        <configuration>
+                            <tag>chillimport-latest</tag>
+                        </configuration>
+                    </execution>
+                </executions>
                 <configuration>
-                    <repository>gitlab-ext.iosb.fraunhofer.de:4567/maximilian.goeckel/pse-sensoren-implementierung
-                    </repository>
+                    <repository>fraunhoferiosb/chillimport</repository>
                     <buildArgs>
                         <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
                     </buildArgs>
+					<imageTags>
+						<imageTag>${project.version}</imageTag>
+					</imageTags>
                 </configuration>
-            </plugin>
+            </plugin>	
         </plugins>
     </build>
 
