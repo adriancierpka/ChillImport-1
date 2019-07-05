@@ -232,7 +232,7 @@ public class Datastream extends Entity {
         }
 
         de.fraunhofer.iosb.ilt.sta.model.ObservedProperty op = new de.fraunhofer.iosb.ilt.sta.model.ObservedProperty();
-        EntityList<de.fraunhofer.iosb.ilt.sta.model.ObservedProperty> observedProperties = new EntityList<>(EntityType.OBSERVED_PROPERTIES);
+        List<de.fraunhofer.iosb.ilt.sta.model.ObservedProperty> observedProperties = new LinkedList<>();
         for (ObservedProperty observedProperty : this.observedProperties) {
             observedProperties.add(observedProperty.convertToFrostStandard());
 

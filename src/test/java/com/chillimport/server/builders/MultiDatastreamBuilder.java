@@ -1,7 +1,11 @@
 package com.chillimport.server.builders;
 
 import de.fraunhofer.iosb.ilt.sta.ServiceFailureException;
-import de.fraunhofer.iosb.ilt.sta.model.*;
+import de.fraunhofer.iosb.ilt.sta.model.IdLong;
+import de.fraunhofer.iosb.ilt.sta.model.MultiDatastream;
+import de.fraunhofer.iosb.ilt.sta.model.ObservedProperty;
+import de.fraunhofer.iosb.ilt.sta.model.Sensor;
+import de.fraunhofer.iosb.ilt.sta.model.Thing;
 import de.fraunhofer.iosb.ilt.sta.model.ext.EntityList;
 import de.fraunhofer.iosb.ilt.sta.model.ext.UnitOfMeasurement;
 
@@ -35,7 +39,7 @@ public class MultiDatastreamBuilder {
         multiDatastream.setUnitOfMeasurements(unitOfMeasurements);
     }
 
-    public void withObservedProperties(EntityList<ObservedProperty> observedProperties) {
+    public void withObservedProperties(List<ObservedProperty> observedProperties) {
         multiDatastream.setObservedProperties(observedProperties);
     }
 
@@ -64,7 +68,7 @@ public class MultiDatastreamBuilder {
         multiDatastream.setUnitOfMeasurements(unitOfMeasurements);
         ObservedPropertyBuilder observedPropertyBuilder = new ObservedPropertyBuilder();
         observedPropertyBuilder.aDefaultObservedProperty();
-        EntityList<ObservedProperty> observedProperties = new EntityList<>(EntityType.OBSERVED_PROPERTIES);
+        List<ObservedProperty> observedProperties = new LinkedList<>();
         observedProperties.add(observedPropertyBuilder.build());
         observedPropertyBuilder.withId(2l);
         observedProperties.add(observedPropertyBuilder.build());
@@ -83,7 +87,10 @@ public class MultiDatastreamBuilder {
                                                                multiDatastream.getDescription(),
                                                                multiDatastream.getMultiObservationDataTypes(),
                                                                multiDatastream.getUnitOfMeasurements());
-        rMultiDatastream.setObservedProperties(multiDatastream.getObservedProperties());
+        EntityList<ObservedProperty> observedProperties = multiDatastream.getObservedProperties();
+        LinkedList<ObservedProperty> listOfObservedProperties = new LinkedList<>();
+        listOfObservedProperties.addAll(observedProperties);
+        rMultiDatastream.setObservedProperties(listOfObservedProperties);
         rMultiDatastream.setSensor(multiDatastream.getSensor());
         rMultiDatastream.setThing(multiDatastream.getThing());
         rMultiDatastream.setId(multiDatastream.getId());

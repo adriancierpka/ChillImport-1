@@ -5,6 +5,8 @@ import de.fraunhofer.iosb.ilt.sta.model.ext.EntityList;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -29,7 +31,7 @@ public class ThingBuilder {
     }
 
     public void withLocation(Location location) {
-        EntityList<Location> locations = new EntityList<>(EntityType.LOCATIONS);
+        List<Location> locations = new LinkedList<>();
         locations.add(location);
         thing.setLocations(locations);
     }
@@ -42,7 +44,7 @@ public class ThingBuilder {
         thing.setProperties(dmap);
         LocationBuilder locationBuilder = new LocationBuilder();
         locationBuilder.aDefaultLocation();
-        EntityList<Location> locations = new EntityList<>(EntityType.LOCATIONS);
+        List<Location> locations = new LinkedList<>();
         locations.add(locationBuilder.build());
         thing.setLocations(locations);
         thing.setId(new IdLong(1l));
@@ -54,7 +56,9 @@ public class ThingBuilder {
 
     public Thing build() {
         Thing rThing = new Thing(thing.getName(), thing.getDescription(), thing.getProperties());
-        rThing.setLocations(thing.getLocations());
+        List<Location> locationList = new LinkedList<>();
+        locationList.addAll(thing.getLocations());
+        rThing.setLocations(locationList);
         rThing.setId(thing.getId());
         return rThing;
     }

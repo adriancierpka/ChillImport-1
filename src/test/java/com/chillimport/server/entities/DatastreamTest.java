@@ -273,7 +273,7 @@ public class DatastreamTest {
         units.add(new de.fraunhofer.iosb.ilt.sta.model.ext.UnitOfMeasurement("N3", "S3", "D3"));
         MultiDatastream mds = new MultiDatastream("name", "desc", obsTypes2, units);
         de.fraunhofer.iosb.ilt.sta.model.ObservedProperty op = new de.fraunhofer.iosb.ilt.sta.model.ObservedProperty("name", new URI("def"), "desc");
-        mds.setObservedProperties(new EntityList<>(EntityType.OBSERVED_PROPERTIES));
+        mds.setObservedProperties(new LinkedList<>());
         mds.getObservedProperties().add(op);
         mds.getObservedProperties().add(op);
         mds.setSensor(s1.convertToFrostStandard());
