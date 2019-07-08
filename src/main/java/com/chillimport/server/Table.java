@@ -7,7 +7,7 @@ import java.util.*;
 /**
  * This class represents a 2-dimensional (m x n) Table.
  * <p>
- * First there is LinkedList entry for every row. Each entry in this LinkedList holds another List (this time an ArrayList), which in turn holds the
+ * First there is ArrayList entry for every row. Each entry in this ArrayList holds another List (this time an ArrayList), which in turn holds the
  * Cells of this Table.
  * <p>
  * Table is designed so that it can be easily accessed row-wise, because only one row at a time is used in the UploadHandler. A column-first designed
@@ -19,7 +19,7 @@ import java.util.*;
  */
 public class Table {
 
-    private LinkedList<ArrayList<Cell>> table;
+    private ArrayList<ArrayList<Cell>> table;
 
 
     /**
@@ -29,7 +29,7 @@ public class Table {
      * @param t the Table to copy
      */
     public Table(Table t) {
-        this.table = new LinkedList<>();
+        this.table = new ArrayList<>();
         Iterator<ArrayList<Cell>> iterator = t.rowIterator();
 
         do {
@@ -42,13 +42,13 @@ public class Table {
 
 
     /**
-     * creates a new empty Table with an empty LinkedList.
+     * creates a new empty Table with an empty ArrayList.
      * <p>
      * Tables created by this constructor should return true on isEmpty() method call. The first row to be appended determines the column-count of the
      * table
      */
     public Table() {
-        this.table = new LinkedList<>();
+        this.table = new ArrayList<>();
     }
 
 
@@ -82,14 +82,14 @@ public class Table {
      *
      * @return a list containing all items
      */
-    public LinkedList<Cell> getColumn(int index) {
+    public ArrayList<Cell> getColumn(int index) {
 
         if (index >= getColumnCount()) {
             throw new IndexOutOfBoundsException();
         }
 
         Iterator<ArrayList<Cell>> rowIterator = this.rowIterator();
-        LinkedList<Cell> columnList = new LinkedList<>();
+        ArrayList<Cell> columnList = new ArrayList<>();
 
         while (rowIterator.hasNext()) {
             columnList.add(rowIterator.next().get(index));
@@ -100,7 +100,7 @@ public class Table {
 
 
     /**
-     * Sets a row of the table at the given index by replacing the ArrayList at this index of the LinkedList
+     * Sets a row of the table at the given index by replacing the ArrayList at this index of the ArrayList
      *
      * @param index the index of the row to set, must be lower or equal to what getRowCount() returns
      * @param row   the new row as a list
@@ -282,7 +282,7 @@ public class Table {
      * The List containing all Rows will be replaced with an empty List.
      */
     public void clear() {
-        this.table = new LinkedList<>();
+        this.table = new ArrayList<>();
     }
 
 

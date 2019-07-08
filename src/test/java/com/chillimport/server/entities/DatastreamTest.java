@@ -39,13 +39,13 @@ public class DatastreamTest {
 
     @Before
     public void setUp() {
-        obsTypes1 = new LinkedList<>();
+        obsTypes1 = new ArrayList<>();
         obsTypes1.add("obsType1");
 
-        units1 = new LinkedList<>();
+        units1 = new ArrayList<>();
         units1.add(new UnitOfMeasurement("N", "S", "D"));
 
-        obsProps1 = new LinkedList<>();
+        obsProps1 = new ArrayList<>();
         obsProps1.add(new ObservedProperty("name", "desc", "def"));
 
         s1 = new Sensor("name", "desc", "enc", "meta");
@@ -63,15 +63,15 @@ public class DatastreamTest {
         ds11 = new Datastream("name", "desc", obsTypes1, units1, obsProps1, s1, t1);
         ds12 = new Datastream("name", "desc", obsTypes1, units1, obsProps1, s1, t1);
 
-        obsTypes2 = new LinkedList<>();
+        obsTypes2 = new ArrayList<>();
         obsTypes2.add("obsType2");
         obsTypes2.add("obsType3");
 
-        units2 = new LinkedList<>();
+        units2 = new ArrayList<>();
         units2.add(new UnitOfMeasurement("N2", "S2", "D2"));
         units2.add(new UnitOfMeasurement("N3", "S3", "D3"));
 
-        obsProps2 = new LinkedList<>();
+        obsProps2 = new ArrayList<>();
         obsProps2.add(new ObservedProperty("name", "desc", "def"));
         obsProps2.add(new ObservedProperty("name", "desc", "def"));
 
@@ -234,12 +234,12 @@ public class DatastreamTest {
         assertEquals(convertedMDS.getName(), mds11.getName());
         assertEquals(convertedMDS.getDescription(), mds11.getDescription());
         assertEquals(convertedMDS.getMultiObservationDataTypes(), mds11.getObservation_types());
-        List<de.fraunhofer.iosb.ilt.sta.model.ext.UnitOfMeasurement> compareUnits = new LinkedList<>();
+        List<de.fraunhofer.iosb.ilt.sta.model.ext.UnitOfMeasurement> compareUnits = new ArrayList<>();
         for (UnitOfMeasurement u : mds11.getUnits_of_measurement()) {
             compareUnits.add(u.convertToFrostStandard());
         }
         assertEquals(convertedMDS.getUnitOfMeasurements(), compareUnits);
-        List<ObservedProperty> compareObsProps = new LinkedList<>();
+        List<ObservedProperty> compareObsProps = new ArrayList<>();
         for (de.fraunhofer.iosb.ilt.sta.model.ObservedProperty o : convertedMDS.getObservedProperties()) {
             o.setId(new IdLong((long) 1));
             compareObsProps.add(new ObservedProperty(o));
@@ -268,12 +268,12 @@ public class DatastreamTest {
 
     @Test
     public void convertBackMDS() throws URISyntaxException, IOException, ServiceFailureException {
-        List<de.fraunhofer.iosb.ilt.sta.model.ext.UnitOfMeasurement> units = new LinkedList<>();
+        List<de.fraunhofer.iosb.ilt.sta.model.ext.UnitOfMeasurement> units = new ArrayList<>();
         units.add(new de.fraunhofer.iosb.ilt.sta.model.ext.UnitOfMeasurement("N2", "S2", "D2"));
         units.add(new de.fraunhofer.iosb.ilt.sta.model.ext.UnitOfMeasurement("N3", "S3", "D3"));
         MultiDatastream mds = new MultiDatastream("name", "desc", obsTypes2, units);
         de.fraunhofer.iosb.ilt.sta.model.ObservedProperty op = new de.fraunhofer.iosb.ilt.sta.model.ObservedProperty("name", new URI("def"), "desc");
-        mds.setObservedProperties(new LinkedList<>());
+        mds.setObservedProperties(new ArrayList<>());
         mds.getObservedProperties().add(op);
         mds.getObservedProperties().add(op);
         mds.setSensor(s1.convertToFrostStandard());

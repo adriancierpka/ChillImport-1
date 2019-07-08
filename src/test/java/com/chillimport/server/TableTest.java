@@ -1,10 +1,9 @@
 package com.chillimport.server;
 
-import org.junit.*;
-
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import java.util.ArrayList;
-import java.util.LinkedList;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -50,7 +49,7 @@ public class TableTest {
 
     @Test
     public void setRow() {
-        LinkedList<Cell> list = new LinkedList<>();
+        ArrayList<Cell> list = new ArrayList<>();
         list.add(new Cell(2));
         list.add(new Cell("Test2"));
         list.add(new Cell(2.234));
@@ -64,7 +63,7 @@ public class TableTest {
 
     @Test
     public void setColumn() {
-        LinkedList<Cell> list = new LinkedList<>();
+        ArrayList<Cell> list = new ArrayList<>();
         list.add(new Cell(50));
         list.add(new Cell(50));
 

@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.net.*;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 
 @RestController
@@ -33,7 +33,7 @@ public class HTMLController {
         //möglicherweise instabil
 
         Configuration sampleConfig;
-        LinkedList<LinkedList<String>> firstThreeRowsOfTable;
+        ArrayList<ArrayList<String>> firstThreeRowsOfTable;
 
         if (file.getName().endsWith(".xls") ||
                 file.getName().endsWith(".xlsx")) {

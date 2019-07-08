@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -199,7 +199,7 @@ public class DatastreamController {
             ErrorHandler.getInstance().addRows(-1, e);
             return new ResponseEntity<>("Wrong URI for Frost-Server.", HttpStatus.NOT_FOUND);
         }
-        List<Datastream> datastreams = new LinkedList<>();
+        List<Datastream> datastreams = new ArrayList<>();
         for (de.fraunhofer.iosb.ilt.sta.model.Datastream frostDs : frostDsList) {
             try {
                 datastreams.add(new Datastream(frostDs));

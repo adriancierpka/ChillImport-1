@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -88,7 +88,7 @@ public class ThingController extends EntityController<Thing> {
     public ResponseEntity<?> getAll() {
 
         EntityList<de.fraunhofer.iosb.ilt.sta.model.Thing> frostThings;
-        List<Thing> things = new LinkedList<>();
+        List<Thing> things = new ArrayList<>();
 
         try {
             SensorThingsService service = sensorThingsServiceFactory.build();

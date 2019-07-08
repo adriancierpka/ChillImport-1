@@ -61,15 +61,15 @@ public class DatastreamControllerTest {
         MockitoAnnotations.initMocks(this);
         mvc = MockMvcBuilders.standaloneSetup(datastreamController).build();
 
-        List<String> obsTypes = new LinkedList<>();
+        List<String> obsTypes = new ArrayList<>();
         obsTypes.add("oT1");
 
-        List<com.chillimport.server.entities.UnitOfMeasurement> units = new LinkedList<>();
+        List<com.chillimport.server.entities.UnitOfMeasurement> units = new ArrayList<>();
         units.add(new com.chillimport.server.entities.UnitOfMeasurement("testUnit", "sym", "def"));
 
         com.chillimport.server.entities.ObservedProperty oP = new com.chillimport.server.entities.ObservedProperty("TestOP", "desc", "def");
         oP.setFrostId("1");
-        List<com.chillimport.server.entities.ObservedProperty> oPs = new LinkedList<>();
+        List<com.chillimport.server.entities.ObservedProperty> oPs = new ArrayList<>();
         oPs.add(oP);
 
         Map<String, Object> pmap = new HashMap<>();

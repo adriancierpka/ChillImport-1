@@ -10,7 +10,7 @@ import de.fraunhofer.iosb.ilt.sta.service.SensorThingsService;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -63,14 +63,14 @@ public class Datastream extends Entity {
     public Datastream(de.fraunhofer.iosb.ilt.sta.model.Datastream ds) throws ServiceFailureException {
         super(ds.getName(), ds.getDescription());
         this.setFrostId(ds.getId().getJson());
-        this.observation_types = new LinkedList<>();
+        this.observation_types = new ArrayList<>();
         this.observation_types.add(ds.getObservationType());
         //convert unit of measurement
-        List<UnitOfMeasurement> units = new LinkedList<>();
+        List<UnitOfMeasurement> units = new ArrayList<>();
         UnitOfMeasurement unit = new UnitOfMeasurement(ds.getUnitOfMeasurement());
         units.add(unit);
         this.units_of_measurement = units;
-        this.observedProperties = new LinkedList<>();
+        this.observedProperties = new ArrayList<>();
         this.observedProperties.add(new ObservedProperty(ds.getObservedProperty()));
 
         this.sensor = new Sensor(ds.getSensor());
@@ -90,12 +90,12 @@ public class Datastream extends Entity {
         this.setFrostId(mds.getId().getJson());
         this.observation_types = mds.getMultiObservationDataTypes();
 
-        this.units_of_measurement = new LinkedList<>();
+        this.units_of_measurement = new ArrayList<>();
         for (de.fraunhofer.iosb.ilt.sta.model.ext.UnitOfMeasurement unit : mds.getUnitOfMeasurements()) {
             this.units_of_measurement.add(new UnitOfMeasurement(unit));
         }
 
-        this.observedProperties = new LinkedList<>();
+        this.observedProperties = new ArrayList<>();
         for (de.fraunhofer.iosb.ilt.sta.model.ObservedProperty op : mds.getObservedProperties()) {
             this.observedProperties.add(new ObservedProperty(op));
         }
@@ -226,13 +226,13 @@ public class Datastream extends Entity {
             }
         }
 
-        List<de.fraunhofer.iosb.ilt.sta.model.ext.UnitOfMeasurement> units = new LinkedList<>();
+        List<de.fraunhofer.iosb.ilt.sta.model.ext.UnitOfMeasurement> units = new ArrayList<>();
         for (UnitOfMeasurement unit : this.units_of_measurement) {
             units.add(unit.convertToFrostStandard());
         }
 
         de.fraunhofer.iosb.ilt.sta.model.ObservedProperty op = new de.fraunhofer.iosb.ilt.sta.model.ObservedProperty();
-        List<de.fraunhofer.iosb.ilt.sta.model.ObservedProperty> observedProperties = new LinkedList<>();
+        List<de.fraunhofer.iosb.ilt.sta.model.ObservedProperty> observedProperties = new ArrayList<>();
         for (ObservedProperty observedProperty : this.observedProperties) {
             observedProperties.add(observedProperty.convertToFrostStandard());
 

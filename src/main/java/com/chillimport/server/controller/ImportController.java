@@ -37,7 +37,7 @@ public class ImportController {
     @Autowired
     private ImportController(FileManager manager) {
 
-        uploadQueue = new LinkedList<>();
+        uploadQueue = new ArrayDeque<>();
         fileManager = manager;
     }
 
@@ -94,7 +94,7 @@ public class ImportController {
     @RequestMapping(value = "/preview", method = RequestMethod.GET)
     public ResponseEntity<?> getPreview(@RequestParam String filename, @RequestParam int headerLines, @RequestParam String delimiter) {
         Configuration sampleConfig;
-        LinkedList<LinkedList<String>> firstThreeRowsOfTable;
+        ArrayList<ArrayList<String>> firstThreeRowsOfTable;
 
         if (filename.endsWith(".xls") ||
                 filename.endsWith(".xlsx")) {

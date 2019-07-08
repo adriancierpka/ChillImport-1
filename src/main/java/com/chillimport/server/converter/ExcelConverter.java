@@ -216,13 +216,13 @@ public class ExcelConverter implements Converter {
      * @param cfg    the configuration after which to Convert the file
      * @param rownum the number of rows to convert
      *
-     * @return the first x rows as a LinkedList of LinkedLists
+     * @return the first x rows as a ArrayList of ArrayLists
      *
      * @throws IOException when the file is not found
      */
-    public static LinkedList<LinkedList<String>> filePreview(File file, Configuration cfg, int rownum) throws IOException {
+    public static ArrayList<ArrayList<String>> filePreview(File file, Configuration cfg, int rownum) throws IOException {
         Table table = convert(file, cfg);
-        LinkedList<LinkedList<String>> firstThreeRowsOfTable = new LinkedList<>();
+        ArrayList<ArrayList<String>> firstThreeRowsOfTable = new ArrayList<>();
         Iterator<ArrayList<com.chillimport.server.Cell>> rowIterator = table.rowIterator();
         int maxsize = rownum;
 
@@ -235,7 +235,7 @@ public class ExcelConverter implements Converter {
             if (rowIterator.hasNext()) {
                 ArrayList<com.chillimport.server.Cell> row = rowIterator.next();
                 Iterator<com.chillimport.server.Cell> iterator = row.iterator();
-                LinkedList<String> stringRow = new LinkedList<>();
+                ArrayList<String> stringRow = new ArrayList<>();
 
                 while (iterator.hasNext()) {
                     stringRow.add(iterator.next().toString());

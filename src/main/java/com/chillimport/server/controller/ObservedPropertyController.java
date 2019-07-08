@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -85,7 +85,7 @@ public class ObservedPropertyController extends EntityController<ObservedPropert
     @RequestMapping(value = "/observedProperty/all", method = RequestMethod.GET)
     public ResponseEntity<?> getAll() {
         EntityList<de.fraunhofer.iosb.ilt.sta.model.ObservedProperty> frostObsProps;
-        List<ObservedProperty> observedProperties = new LinkedList<>();
+        List<ObservedProperty> observedProperties = new ArrayList<>();
         try {
             SensorThingsService service = sensorThingsServiceFactory.build();
             frostObsProps = service.observedProperties().query().list();

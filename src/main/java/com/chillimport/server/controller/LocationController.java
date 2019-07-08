@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -88,7 +88,7 @@ public class LocationController extends EntityController<Location> {
     @RequestMapping(value = "/location/all", method = RequestMethod.GET)
     public ResponseEntity<?> getAll() {
         EntityList<de.fraunhofer.iosb.ilt.sta.model.Location> frostLocations;
-        List<Location> locations = new LinkedList<>();
+        List<Location> locations = new ArrayList<>();
         try {
             SensorThingsService service = sensorThingsServiceFactory.build();
             frostLocations = service.locations().query().list();

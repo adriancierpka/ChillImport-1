@@ -57,8 +57,8 @@ public class UploadHandler {
      *
      * @throws IOException if the file is not of type excel or CSV
      */
-    public static LinkedList<LinkedList<String>> preview(File file, Configuration sampleConfig) throws IOException {
-        LinkedList<LinkedList<String>> firstThreeRowsOfTable;
+    public static ArrayList<ArrayList<String>> preview(File file, Configuration sampleConfig) throws IOException {
+        ArrayList<ArrayList<String>> firstThreeRowsOfTable;
 
         switch (sampleConfig.getDataType()) {
             case EXCEL:
@@ -209,7 +209,7 @@ public class UploadHandler {
 
         StreamObservation[] observationColumns = cfg.getStreamData();
         TableDataTypes[] newDataTypes = null;
-        LinkedList<String> dsTypes = new LinkedList<>();
+        ArrayList<String> dsTypes = new ArrayList<>();
         ArrayList<Integer> positions = new ArrayList<>();
 
         for (StreamObservation stream : observationColumns) {
