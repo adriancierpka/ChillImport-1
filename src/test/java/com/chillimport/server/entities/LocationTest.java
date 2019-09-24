@@ -1,12 +1,15 @@
 package com.chillimport.server.entities;
 
+import com.chillimport.server.FrostSetup;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iosb.ilt.sta.model.IdLong;
 import org.geojson.GeoJsonObject;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URL;
 
 import static org.junit.Assert.*;
 
@@ -20,6 +23,14 @@ public class LocationTest {
     private Location l3;
 
     private String locString;
+    
+    private static String url;
+    
+    @BeforeClass 
+    public static void beforeClass() {
+    	url = FrostSetup.getFrostURL();
+    }
+
 
 
     @Before
@@ -77,7 +88,7 @@ public class LocationTest {
     public void convertToFrostStandard() {
         de.fraunhofer.iosb.ilt.sta.model.Location convertedLoc = new de.fraunhofer.iosb.ilt.sta.model.Location();
         try {
-            convertedLoc = l2.convertToFrostStandard();
+            convertedLoc = l2.convertToFrostStandard(new URL(url));
         } catch (IOException e) {
             System.out.println("IOException");
             e.printStackTrace();
@@ -100,7 +111,7 @@ public class LocationTest {
 
     @Test(expected = IOException.class)
     public void convertBadArgument() throws IOException {
-        l3.convertToFrostStandard();
+        l3.convertToFrostStandard(new URL(url));
     }
 
     @Test

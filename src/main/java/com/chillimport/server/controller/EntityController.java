@@ -1,6 +1,9 @@
 package com.chillimport.server.controller;
 
 import com.chillimport.server.entities.Entity;
+
+import java.net.URL;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 public abstract class EntityController<T extends Entity> {
 
 
-    public abstract ResponseEntity<?> create(T entity);
+    public abstract ResponseEntity<?> create(EntityStringWrapper<T> entity);
 
-    public abstract ResponseEntity<?> get(int id);
+    public abstract ResponseEntity<?> get(int id, String frostUrl);
 
-    public abstract ResponseEntity<?> getAll();
+    public abstract ResponseEntity<?> getAll(String frostUrl);
 }

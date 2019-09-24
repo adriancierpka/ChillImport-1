@@ -54,6 +54,7 @@ function closeModal(id) {
     $('#' + id).modal('toggle');
 }
 
+/*
 function serverdown(fnc) {
     $.ajax({
         type: 'GET',
@@ -68,7 +69,7 @@ function serverdown(fnc) {
         }
     });
 }
-
+*/
 $(document).ready(function () {
     $('#selecttime').select2({
         placeholder: "Select a timezone",

@@ -290,15 +290,15 @@ public class FileManager {
     }
 
 
-    /**
+    /*
      * Sets the FROST server URl for later use
      *
      * @param url the URL string
-     */
+     
     public static void setServerURLOnStartup(String url) {
         SERVER_URL = url;
     }
-
+	*/
 
     /**
      * Sets a username and password for authetication when uplaoding
@@ -309,15 +309,17 @@ public class FileManager {
         USER_NAME_PASSWORD = name;
     }
 
-
+    
     /**
      * Gets and returns the value of SERVER_URL
      *
      * @return the value of SERVER_URL
      */
+    /*
     public static URL getServerURL() throws MalformedURLException {
         return new URL(SERVER_URL);
     }
+    */
 
 
     /**

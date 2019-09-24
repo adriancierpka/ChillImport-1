@@ -5,11 +5,19 @@ function createObsprop() {
     var desc = $("#obsdescription").val();
     var def = $("#obsdefinition").val();
 
-    var mydata = {
+    var myOP = {
         name: name,
         description: desc,
         definition: def
     };
+    
+    var url = document.getElementById("serverurlbox").innerText;
+    
+    var mydata = {
+    	entity: myOP,
+    	string: url
+    };
+    addToLog(JSON.stringify(mydata));
 
     $.ajax({
         type: "POST",

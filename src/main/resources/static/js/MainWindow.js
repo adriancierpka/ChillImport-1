@@ -58,6 +58,7 @@ function loadConfigs() {
                 list.append(option);
             }
             list.trigger('change');
+            addToLog("Loaded configurations");
         },
         error: function (e) {
             addToLog(e.responseText);
@@ -73,6 +74,7 @@ function saveConfig() {
     var currentInput;
     var parsed;
     var stop = false;
+    var url = document.querySelector("#frostserverurl").value;
 
     try {
         new RegExp(currentDelimiter);
@@ -93,7 +95,7 @@ function saveConfig() {
         var obj = {},
             $td = $(this).find('td');
         currentInput = $td.eq(1).find("input").val();
-        if (currentInput === null || currentInput === "") {
+        if ((currentInput === null || currentInput === "") && isExcel === false) {
             $.notify({
                 message: 'Please specify the date format (no empty strings allowed).'
             },{
@@ -328,7 +330,8 @@ function saveConfig() {
         dateTime: date,
         streamData: streams,
         mapOfMagicNumbers: map,
-        dataType: filetype
+        dataType: filetype,
+        frostURL: url
     };
 
     var jsoncfg = JSON.stringify(formData, null, 4);
@@ -366,7 +369,11 @@ function loadConfig(id) {
         },
         success: function (response) {
             mappingData = response.mapOfMagicNumbers;
-
+            $('#frostserverurl').val(response.frostURL);
+            
+            openurldialog();
+            
+            
             $('#delimiter').val(response.delimiter);
             $('#headerlines').val(response.numberOfHeaderlines);
             currentDelimiter = response.delimiter;
@@ -402,7 +409,7 @@ function loadConfig(id) {
 
             lines = response.streamData.length;
             if (lines > 0) {
-                thingConfig(response.streamData, null, true);
+                thingConfig(response.streamData, response.frostURL);
             }
         },
         error: function (e) {
@@ -411,17 +418,19 @@ function loadConfig(id) {
     });
 }
 
-function thingConfig(streams) {
+function thingConfig(streams, url) {
 
     $.ajax({
         type: 'GET',
         url: 'datastream/single',
         data: {
             id: parseInt(streams[0].dsID),
-            isMulti: streams[0].multiStream
+            isMulti: streams[0].multiStream,
+            url: url
+            
         },
         success: function (result) {
-            loadThing(result.thing.frostId, streams);
+            loadThing(result.thing.frostId, streams, url);
         },
         error: function (e) {
             addToLog(e.responseText);
@@ -430,12 +439,14 @@ function thingConfig(streams) {
 }
 
 function loadStreamConfig(stream, div) {
+	var url = document.getElementById("serverurlbox").innerText;
     $.ajax({
         type: 'GET',
         url: 'datastream/single',
         data: {
             id: parseInt(stream.dsID),
-            isMulti: stream.multiStream
+            isMulti: stream.multiStream,
+            url: url
         },
         success: function (result) {
             div.find('select').val(result.name + ' (' + result.frostId + ')').trigger('change');
@@ -484,9 +495,26 @@ function resetConfig() {
  * gets all things from the frost-server
  */
 function getThings() {
+	
+    var listTh = $('#things');
+    var list2 = $('#datastreams');
+    
+    listTh.empty().append(new Option('', '', null, null));
+    list2.empty().append(new Option('', '', null, null));
+    
+    listTh.trigger('change');
+    list2.trigger('change');
+    
+	
+	var url = document.getElementById("serverurlbox").innerText;
+	var mydata = {
+		frostUrlString: url	
+	};
     $.ajax({
         type: "GET",
         url: "thing/all",
+        data: mydata, 
+        async: false,
         success: function (response) {
             var json = JSON.stringify(response, null, 4);
             var jsonparsed = JSON.parse(json);
@@ -499,11 +527,14 @@ function getThings() {
                 list.append(option);
             }
             list.trigger('change');
+            addToLog("Things loaded.");
         },
         error: function (e) {
             addToLog(e.responseText);
+            
         }
     });
+    
 }
 
 
@@ -514,11 +545,13 @@ var streamData = [];
  * @param id id of a thing
  */
 function getThingStreams(id, cfg, streams) {
+	var url = document.getElementById("serverurlbox").innerText;
     $.ajax({
         type: "GET",
         url: "datastream/all",
         data: {
-            thingId: id
+            thingId: id,
+            url: url
         },
         success: function (response) {
             var json = JSON.stringify(response, null, 4);
@@ -663,12 +696,13 @@ function importData() {
     var parsed;
     var stop = false;
     var cfgName = "temp";
+    var url = document.querySelector("#frostserverurl").value;
     var date = [];
     $('#timeTable').find('tbody tr').each(function () {
         var obj = {},
             $td = $(this).find('td');
         currentInput = $td.eq(1).find("input").val();
-        if (currentInput === null || currentInput === "") {
+        if ((currentInput === null || currentInput === "") && isExcel === false) {
             $.notify({
                 message: 'Please specify the date format (no empty strings allowed).'
             },{
@@ -828,7 +862,6 @@ function importData() {
 
     var map = mappingData;
 
-
     var formData = {
         name: cfgName,
         delimiter: currentDelimiter,
@@ -837,9 +870,10 @@ function importData() {
         dateTime: date,
         streamData: streams,
         mapOfMagicNumbers: map,
-        dataType: filetype
+        dataType: filetype,
+        frostURL: url
     };
-
+    
     var jsoncfg = JSON.stringify(formData, null, 4);
     var mydata = {
         config: jsoncfg,
@@ -1009,13 +1043,99 @@ function check(string, done) {
 function main() {
     loadConfigs();
     document.getElementById("log").value = "";
-    getThings();
-    showFrostURL();
+    //getThings();
+    //showFrostURL();
 }
+
+/**
+ * loads the data from the frost-server
+ * @returns
+ */
+function urlconfirmed() {
+	
+    var bool = showFrostURL();
+    if (bool) {
+    	addToLog("Try to load things ...");
+    	getThings();
+    } 
+    
+}
+
+
+function openurldialog() {
+	var url = document.querySelector("#frostserverurl").value;
+	var mydata = {
+		frostUrl: url
+	};
+	
+	var res;
+	var message;
+	
+    $.ajax({
+    	async: false,
+        type: 'GET',
+        url: "server-check",
+        data: mydata,
+        success: function (response) {
+        	message = response;
+        	if (response === "Server reachable") {  
+                res = true;
+        	} else {
+        		res = false;
+        	}
+            
+        },
+        error: function (e) {
+            addToLog(e.responseText);
+            res = false;
+        }
+
+    });
+    var r;
+    if (res) {
+    	r = confirm('Server:\n"' + url + '"\nis reachable.\nDo you want to connect?');
+    	
+    	if (r) {
+    		document.getElementById("serverurlbox").innerText = url;
+            document.getElementById("serverurlbox").href = url;
+            
+            addToLog("FROST-Server: " + url);
+            
+            addToLog("Try to load things ...");
+        	getThings();
+    	} else {
+    		document.querySelector("#frostserverurl").value = document.getElementById("serverurlbox").innerText;
+    	}
+    }  else {
+    	r = confirm("Can't connect to: " + url  + "\nDetails: " + message);
+    	document.querySelector("#frostserverurl").value = document.getElementById("serverurlbox").innerText;
+    }
+    
+	
+}
+
+
+
+
 
 function pad2(number) {
     return (number < 10 ? '0' : '') + number
 }
+
+
+var scrollToBottom = false;
+
+function toggleScroll() {
+	if (scrollToBottom) {
+		scrollToBottom = false;
+		document.getElementById("scrollDown").innerText = "Scroll to bottom";
+	} else {
+		scrollToBottom = true;
+		document.getElementById("scrollDown").innerText = "Stop scrolling";
+		document.getElementById("log").scrollTop = document.getElementById("log").scrollHeight;
+	}
+}
+
 
 /**
  * adds a message to the log
@@ -1031,6 +1151,10 @@ function addToLog(msg) {
     document.getElementById("log").value += time + msg + "\n";
 
     showmessagetag();
+    
+    if(scrollToBottom) {
+    	document.getElementById("log").scrollTop = document.getElementById("log").scrollHeight;
+    }
 }
 
 /**
@@ -1044,13 +1168,14 @@ function loadStreamCol(observations, div) {
     }
 }
 
-/**
+/*
+ * NOT NEEDED?
  * loads the streamdata from the server
  * @param dsid
  * @param multi
  * @param div
  * @param cfg
- */
+ 
 function loadStreamData(stream, div) {
     $.ajax({
         type: 'GET',
@@ -1068,12 +1193,15 @@ function loadStreamData(stream, div) {
     });
 }
 
-function loadThing(id, streams) {
+*/
+
+function loadThing(id, streams, url) {
     $.ajax({
         type: 'GET',
         url: 'thing/single',
         data: {
-            thingId: parseInt(id)
+            thingId: parseInt(id),
+            frostUrlString: url
         },
         success: function (result) {
             $('#things').val(result.name + " (" + result.frostId + ")").trigger('change');
@@ -1131,22 +1259,43 @@ $('#things').on('select2:select', function (e) {
 
 
 /**
- * gets the frost url from the backend and shows it
+ * checks if  url is valid and shows it
+ * returns true if server is reachable otherwise false
  */
 function showFrostURL() {
+	var url = document.querySelector("#frostserverurl").value;
+	var mydata = {
+		frostUrl: url
+	};
+	
+	var res;
     $.ajax({
+    	async: false,
         type: 'GET',
-        url: "getfrosturl",
+        url: "server-check",
+        data: mydata,
         success: function (response) {
-            document.getElementById("serverurlbox").innerText = response;
-            document.getElementById("serverurlbox").href = response;
-            addToLog("FROST-Server: " + response);
+        	if (response === "Server reachable") {
+        		document.getElementById("serverurlbox").innerText = url;
+                document.getElementById("serverurlbox").href = url;
+                
+                addToLog("FROST-Server: " + url);
+                
+                res = true;
+        	} else {
+        		addToLog(response);
+        		res = false;
+        	}
+            
         },
         error: function (e) {
             addToLog(e.responseText);
+            res = false;
         }
 
     });
+    
+    return res;
 }
 
 /**

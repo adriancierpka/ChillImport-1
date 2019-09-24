@@ -1,6 +1,7 @@
 package com.chillimport.server.controller;
 
 import com.chillimport.server.FileManager;
+import com.chillimport.server.FrostSetup;
 import com.chillimport.server.builders.DatastreamBuilder;
 import com.chillimport.server.builders.MultiDatastreamBuilder;
 import com.chillimport.server.utility.SensorThingsServiceFactory;
@@ -26,6 +27,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.*;
 
 import static org.mockito.Mockito.mock;
@@ -46,30 +48,56 @@ public class DatastreamControllerTest {
     private WebApplicationContext context;
 
     private MockMvc mvc;
+    
+    private MockMvc mvcOPC; 
+    
+    private MockMvc mvcSensor;
+    
+    private MockMvc mvcThing;
 
     private String dsString;
     private String mdsString;
+    
+    private static String url;
 
     @Mock
     private SensorThingsServiceFactory sensorThingsServiceFactory;
 
     @InjectMocks
     private DatastreamController datastreamController;
+    
+    @InjectMocks
+    private SensorController sensorController;
+    
+    @InjectMocks
+    private ObservedPropertyController opC;
+    
+    @InjectMocks
+    private ThingController thingController;
+    
+    @BeforeClass 
+    public static void beforeClass() {
+    	url = FrostSetup.getFrostURL();
+    }
 
     @Before
-    public void setup() throws JsonProcessingException {
+    public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
         mvc = MockMvcBuilders.standaloneSetup(datastreamController).build();
+        
+        mvcOPC = MockMvcBuilders.standaloneSetup(opC).build(); 
+        mvcSensor = MockMvcBuilders.standaloneSetup(sensorController).build();
+        mvcThing = MockMvcBuilders.standaloneSetup(thingController).build();
 
-        List<String> obsTypes = new LinkedList<>();
+        List<String> obsTypes = new ArrayList<>();
         obsTypes.add("oT1");
 
-        List<com.chillimport.server.entities.UnitOfMeasurement> units = new LinkedList<>();
+        List<com.chillimport.server.entities.UnitOfMeasurement> units = new ArrayList<>();
         units.add(new com.chillimport.server.entities.UnitOfMeasurement("testUnit", "sym", "def"));
 
         com.chillimport.server.entities.ObservedProperty oP = new com.chillimport.server.entities.ObservedProperty("TestOP", "desc", "def");
         oP.setFrostId("1");
-        List<com.chillimport.server.entities.ObservedProperty> oPs = new LinkedList<>();
+        List<com.chillimport.server.entities.ObservedProperty> oPs = new ArrayList<>();
         oPs.add(oP);
 
         Map<String, Object> pmap = new HashMap<>();
@@ -108,23 +136,42 @@ public class DatastreamControllerTest {
                                                                                                         sensor,
                                                                                                         thing);
 
-
         ObjectMapper mapper = new ObjectMapper();
-        dsString = mapper.writeValueAsString(ds);
-        mdsString = mapper.writeValueAsString(mds);
+        dsString = mapper.writeValueAsString(new EntityStringWrapper<com.chillimport.server.entities.Datastream>(ds,url));
+        mdsString = mapper.writeValueAsString(new EntityStringWrapper<com.chillimport.server.entities.Datastream>(mds,url));
+        
+        when(sensorThingsServiceFactory.build(Mockito.any())).thenReturn(new SensorThingsService(new URL(url)));
+        
+        String op1String = mapper.writeValueAsString(new EntityStringWrapper<com.chillimport.server.entities.ObservedProperty>(oP,url));
+        String op2String = mapper.writeValueAsString(new EntityStringWrapper<com.chillimport.server.entities.ObservedProperty>(oP2,url));
+        
+        this.mvcOPC.perform(post("/observedProperty/create").contentType("application/json").content(op1String)).andDo(print()).andExpect(status().isOk());
+        this.mvcOPC.perform(post("/observedProperty/create").contentType("application/json").content(op2String)).andDo(print()).andExpect(status().isOk());
+        
+        String sensorString = mapper.writeValueAsString(new EntityStringWrapper<com.chillimport.server.entities.Sensor>(sensor, url));
+        
+        this.mvcSensor.perform(post("/sensor/create").contentType("application/json").content(sensorString)).andDo(print()).andExpect(status().isOk());
+        
+        String thingString = mapper.writeValueAsString(new EntityStringWrapper<com.chillimport.server.entities.Thing>(thing, url));
+        
+        this.mvcThing.perform(post("/thing/create").contentType("application/json").content(thingString)).andDo(print()).andExpect(status().isOk());
+        
+        
     }
-
-
+     
     @Test
     public void create() throws Exception {
-
-        when(sensorThingsServiceFactory.build()).thenReturn(new SensorThingsService(FileManager.getServerURL()));
-
+    	
+        when(sensorThingsServiceFactory.build(Mockito.any())).thenReturn(new SensorThingsService(new URL(url)));
+        
+        
         this.mvc.perform(post("/datastream/create").contentType("application/json").content(dsString)).andDo(print()).andExpect(status().isOk());
         this.mvc.perform(post("/datastream/create").contentType("application/json").content(mdsString)).andDo(print()).andExpect(status().isOk());
 
     }
-
+    
+	
+    
     @Test
     public void getSingle() throws Exception {
 
@@ -141,15 +188,17 @@ public class DatastreamControllerTest {
 
         when(dsDaoMock.find(1)).thenReturn(dsMock);
         when(sensorThingsServiceMock.datastreams()).thenReturn(dsDaoMock);
-        when(sensorThingsServiceFactory.build()).thenReturn(sensorThingsServiceMock);
+        when(sensorThingsServiceFactory.build(Mockito.any())).thenReturn(sensorThingsServiceMock);
 
         MvcResult result = this.mvc.perform(get("/datastream/single").param("id", "1").param("isMulti",
-                                                                                             "false")).andDo(print()).andExpect(status().isOk()).andReturn();
+                                                                                             "false").param("url", url)).andDo(print()).andExpect(status().isOk()).andReturn();
 
         Assert.assertEquals(result.getResponse().getContentAsString(),
                             "{\"name\":\"Mock DS\",\"description\":\"descr\",\"frostId\":\"1\",\"observation_types\":[\"defaultObservationType\"],\"units_of_measurement\":[{\"name\":\"defaultUnit\",\"symbol\":\"defaultSym\",\"definition\":\"defaultDef\"}],\"observedProperties\":[{\"name\":\"defaultObservedProperty\",\"description\":\"defaultDescription\",\"frostId\":\"1\",\"definition\":\"default.uri\"}],\"sensor\":{\"name\":\"defaultSensor\",\"description\":\"defaultDescription\",\"frostId\":\"1\",\"encoding_TYPE\":\"default\",\"metadata\":\"defaultMetadata\"},\"thing\":{\"name\":\"defaultThing\",\"description\":\"defaultDescription\",\"frostId\":\"1\",\"properties\":{\"defaulProperty\":\"defaultValue\"},\"location\":{\"name\":\"defaultName\",\"description\":\"defaultLocation\",\"frostId\":\"1\",\"encoding_TYPE\":\"application/vnd.geo+json\",\"location\":\"{\\n       \\\"type\\\": \\\"Point\\\",\\n       \\\"coordinates\\\": [123.4, 0.0]}\"}},\"multi\":false}");
     }
-
+	
+    
+    
     @Test
     public void getSingleMulti() throws Exception {
 
@@ -166,17 +215,20 @@ public class DatastreamControllerTest {
 
         when(mdsDaoMock.find(1)).thenReturn(mdsMock);
         when(sensorThingsServiceMock.multiDatastreams()).thenReturn(mdsDaoMock);
-        when(sensorThingsServiceFactory.build()).thenReturn(sensorThingsServiceMock);
+        when(sensorThingsServiceFactory.build(Mockito.any())).thenReturn(sensorThingsServiceMock);
 
         MvcResult result = this.mvc.perform(get("/datastream/single").param("id", "1").param("isMulti",
-                                                                                             "true")).andDo(print()).andExpect(status().isOk()).andReturn();
+                                                                                             "true").param("url", url)).andDo(print()).andExpect(status().isOk()).andReturn();
 
         Assert.assertEquals(result.getResponse().getContentAsString(),
                             "{\"name\":\"MDS Mock\",\"description\":\"descr\",\"frostId\":\"1\",\"observation_types\":[\"defaultObservationType1\",\"defaultObservationType2\"],\"units_of_measurement\":[{\"name\":\"defaultUnit1\",\"symbol\":\"defaultSym\",\"definition\":\"defaultDef\"},{\"name\":\"defaultUnit2\",\"symbol\":\"defaultSym\",\"definition\":\"defaultDef\"}],\"observedProperties\":[{\"name\":\"defaultObservedProperty\",\"description\":\"defaultDescription\",\"frostId\":\"1\",\"definition\":\"default.uri\"},{\"name\":\"defaultObservedProperty\",\"description\":\"defaultDescription\",\"frostId\":\"2\",\"definition\":\"default.uri\"}],\"sensor\":{\"name\":\"defaultSensor\",\"description\":\"defaultDescription\",\"frostId\":\"1\",\"encoding_TYPE\":\"default\",\"metadata\":\"defaultMetadata\"},\"thing\":{\"name\":\"defaultThing\",\"description\":\"defaultDescription\",\"frostId\":\"1\",\"properties\":{\"defaulProperty\":\"defaultValue\"},\"location\":{\"name\":\"defaultName\",\"description\":\"defaultLocation\",\"frostId\":\"1\",\"encoding_TYPE\":\"application/vnd.geo+json\",\"location\":\"{\\n       \\\"type\\\": \\\"Point\\\",\\n       \\\"coordinates\\\": [123.4, 0.0]}\"}},\"multi\":true}");
     }
+    
 
     @Test
     public void getAll() throws Exception {
+    	
+    	
 
         SensorThingsService sensorThingsServiceMock = mock(SensorThingsService.class);
         ThingDao thingDaoMock = mock(ThingDao.class);
@@ -215,9 +267,9 @@ public class DatastreamControllerTest {
         when(thingDaoMock.find(1)).thenReturn(thingMock);
         when(sensorThingsServiceMock.things()).thenReturn(thingDaoMock);
 
-        when(sensorThingsServiceFactory.build()).thenReturn(sensorThingsServiceMock);
+        when(sensorThingsServiceFactory.build(Mockito.any())).thenReturn(sensorThingsServiceMock);
 
-        MvcResult result = this.mvc.perform(get("/datastream/all").param("thingId", "1")).andDo(print()).andExpect(status().isOk()).andReturn();
+        MvcResult result = this.mvc.perform(get("/datastream/all").param("thingId", "1").param("url", url)).andDo(print()).andExpect(status().isOk()).andReturn();
 
         Assert.assertEquals(result.getResponse().getContentAsString(),
                             "[{\"name\":\"Mock DS\",\"description\":\"descr\",\"frostId\":\"1\",\"observation_types\":[\"defaultObservationType\"],\"units_of_measurement\":[{\"name\":\"defaultUnit\",\"symbol\":\"defaultSym\",\"definition\":\"defaultDef\"}],\"observedProperties\":[{\"name\":\"defaultObservedProperty\",\"description\":\"defaultDescription\",\"frostId\":\"1\",\"definition\":\"default.uri\"}],\"sensor\":{\"name\":\"defaultSensor\",\"description\":\"defaultDescription\",\"frostId\":\"1\",\"encoding_TYPE\":\"default\",\"metadata\":\"defaultMetadata\"},\"thing\":{\"name\":\"defaultThing\",\"description\":\"defaultDescription\",\"frostId\":\"1\",\"properties\":{\"defaulProperty\":\"defaultValue\"},\"location\":{\"name\":\"defaultName\",\"description\":\"defaultLocation\",\"frostId\":\"1\",\"encoding_TYPE\":\"application/vnd.geo+json\",\"location\":\"{\\n       \\\"type\\\": \\\"Point\\\",\\n       \\\"coordinates\\\": [123.4, 0.0]}\"}},\"multi\":false},{\"name\":\"MDS Mock\",\"description\":\"descr\",\"frostId\":\"1\",\"observation_types\":[\"defaultObservationType1\",\"defaultObservationType2\"],\"units_of_measurement\":[{\"name\":\"defaultUnit1\",\"symbol\":\"defaultSym\",\"definition\":\"defaultDef\"},{\"name\":\"defaultUnit2\",\"symbol\":\"defaultSym\",\"definition\":\"defaultDef\"}],\"observedProperties\":[{\"name\":\"defaultObservedProperty\",\"description\":\"defaultDescription\",\"frostId\":\"1\",\"definition\":\"default.uri\"},{\"name\":\"defaultObservedProperty\",\"description\":\"defaultDescription\",\"frostId\":\"2\",\"definition\":\"default.uri\"}],\"sensor\":{\"name\":\"defaultSensor\",\"description\":\"defaultDescription\",\"frostId\":\"1\",\"encoding_TYPE\":\"default\",\"metadata\":\"defaultMetadata\"},\"thing\":{\"name\":\"defaultThing\",\"description\":\"defaultDescription\",\"frostId\":\"1\",\"properties\":{\"defaulProperty\":\"defaultValue\"},\"location\":{\"name\":\"defaultName\",\"description\":\"defaultLocation\",\"frostId\":\"1\",\"encoding_TYPE\":\"application/vnd.geo+json\",\"location\":\"{\\n       \\\"type\\\": \\\"Point\\\",\\n       \\\"coordinates\\\": [123.4, 0.0]}\"}},\"multi\":true}]");
@@ -226,7 +278,7 @@ public class DatastreamControllerTest {
     @Test
     public void malformedURLEx() throws Exception {
 
-        when(sensorThingsServiceFactory.build()).thenThrow(MalformedURLException.class);
+        when(sensorThingsServiceFactory.build(Mockito.any())).thenThrow(MalformedURLException.class);
 
 
         this.mvc.perform(post("/datastream/create").contentType("application/json").content(mdsString)).andDo(print()).andExpect(status().isNotFound()).andExpect(
@@ -236,12 +288,12 @@ public class DatastreamControllerTest {
                 content().string(
                         "Malformed URL for Frost-Server."));
         this.mvc.perform(get("/datastream/single").param("id", "1").param("isMulti",
-                                                                          "true")).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
+                                                                          "true").param("url", url)).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
                 "Malformed URL for Frost-Server."));
         this.mvc.perform(get("/datastream/single").param("id", "1").param("isMulti",
-                                                                          "false")).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
+                                                                          "false").param("url", url)).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
                 "Malformed URL for Frost-Server."));
-        this.mvc.perform(get("/datastream/all").param("thingId", "1")).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
+        this.mvc.perform(get("/datastream/all").param("thingId", "1").param("url", url)).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
                 "Malformed URL for Frost-Server."));
 
     }
@@ -249,7 +301,7 @@ public class DatastreamControllerTest {
     @Test
     public void uRISyntaxEx() throws Exception {
 
-        when(sensorThingsServiceFactory.build()).thenThrow(URISyntaxException.class);
+        when(sensorThingsServiceFactory.build(Mockito.any())).thenThrow(URISyntaxException.class);
 
 
         this.mvc.perform(post("/datastream/create").contentType("application/json").content(mdsString)).andDo(print()).andExpect(status().isNotFound()).andExpect(
@@ -259,12 +311,12 @@ public class DatastreamControllerTest {
                 content().string(
                         "Wrong URI for Frost-Server."));
         this.mvc.perform(get("/datastream/single").param("id", "1").param("isMulti",
-                                                                          "true")).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
+                                                                          "true").param("url", url)).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
                 "Wrong URI for Frost-Server."));
         this.mvc.perform(get("/datastream/single").param("id", "1").param("isMulti",
-                                                                          "false")).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
+                                                                          "false").param("url", url)).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
                 "Wrong URI for Frost-Server."));
-        this.mvc.perform(get("/datastream/all").param("thingId", "1")).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
+        this.mvc.perform(get("/datastream/all").param("thingId", "1").param("url", url)).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
                 "Wrong URI for Frost-Server."));
 
     }
@@ -283,17 +335,17 @@ public class DatastreamControllerTest {
         when(sensorThingsServiceMock.datastreams()).thenReturn(dsDaoMock);
         when(thingDaoMock.find(1)).thenThrow(ServiceFailureException.class);
         when(sensorThingsServiceMock.things()).thenReturn(thingDaoMock);
-        when(sensorThingsServiceFactory.build()).thenReturn(sensorThingsServiceMock);
+        when(sensorThingsServiceFactory.build(Mockito.any())).thenReturn(sensorThingsServiceMock);
 
         this.mvc.perform(get("/datastream/single").param("id",
-                                                         "1").param("isMulti", "true")).andDo(print()).andExpect(status().isNotFound()).andExpect(
+                                                         "1").param("isMulti", "true").param("url", url)).andDo(print()).andExpect(status().isNotFound()).andExpect(
                 content().string(
                         "Failed to find MultiDatastream on server."));
         this.mvc.perform(get("/datastream/single").param("id",
-                                                         "1").param("isMulti", "false")).andDo(print()).andExpect(status().isNotFound()).andExpect(
+                                                         "1").param("isMulti", "false").param("url", url)).andDo(print()).andExpect(status().isNotFound()).andExpect(
                 content().string(
                         "Failed to find Datastream on server."));
-        this.mvc.perform(get("/datastream/all").param("thingId", "1")).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
+        this.mvc.perform(get("/datastream/all").param("thingId", "1").param("url", url)).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
                 "Failed to find Datastreams of Thing (Id: 1) on server."));
 
 

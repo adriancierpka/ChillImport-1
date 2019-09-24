@@ -8,7 +8,8 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.net.URL;
+import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 
@@ -33,8 +34,10 @@ public class CSVConverterTest {
         map1[0] = new MagicNumberMap(1, "true", "wahr");
         map1[1] = new MagicNumberMap(2, "wahr", "true");
         map1[2] = new MagicNumberMap(4, "trueheit", "wahrheit");
+        
+        URL dummyURL = new URL("https://www.google.de/");
 
-        obj1 = new Configuration(10, "aConfiguration", ";", 2, zidc1, dateTime1, streamData1, map1, DataType.CSV);
+        obj1 = new Configuration(10, "aConfiguration", ";", 2, zidc1, dateTime1, streamData1, map1, DataType.CSV, dummyURL);
     }
 
     @Test
@@ -64,7 +67,7 @@ public class CSVConverterTest {
     @Test
     public void filePreview() throws IOException {
         FileManager fm = new FileManager();
-        LinkedList<LinkedList<String>> ll = CSVConverter.filePreview(new File(fm.getLogPath() + "/returnRows/2018-08-27T15-18-42--skippedRows.csv"),
+        ArrayList<ArrayList<String>> ll = CSVConverter.filePreview(new File(fm.getLogPath() + "/returnRows/2018-08-27T15-18-42--skippedRows.csv"),
                                                                      ConfigurationManager.loadConfig(-1365040327),
                                                                      4);
         String[] content = new String[8];
@@ -77,7 +80,7 @@ public class CSVConverterTest {
         content[6] = "Ich hasse Gedichtee";
         content[7] = "Klopapierr";
         int curr = 0;
-        for (LinkedList<String> s : ll) {
+        for (ArrayList<String> s : ll) {
             for (String str : s) {
                 assertEquals(content[curr], str);
                 curr++;

@@ -118,13 +118,13 @@ public class CSVConverter implements Converter {
      * @param cfg    the configuration after which to Convert the file
      * @param rownum the number of rows to convert
      *
-     * @return the first three rows as a LinkedList of LinkedLists
+     * @return the first three rows as a ArrayList of ArrayLists
      *
      * @throws IOException when the file is not found
      */
-    public static LinkedList<LinkedList<String>> filePreview(File file, Configuration cfg, int rownum) throws IOException {
+    public static ArrayList<ArrayList<String>> filePreview(File file, Configuration cfg, int rownum) throws IOException {
         Table table = convert(file, cfg);
-        LinkedList<LinkedList<String>> firstThreeRowsOfTable = new LinkedList<>();
+        ArrayList<ArrayList<String>> firstThreeRowsOfTable = new ArrayList<>();
         Iterator<ArrayList<Cell>> rowIterator = table.rowIterator();
         int maxsize = rownum;
 
@@ -136,7 +136,7 @@ public class CSVConverter implements Converter {
             if (rowIterator.hasNext()) {
                 ArrayList<Cell> row = rowIterator.next();
                 Iterator<Cell> iterator = row.iterator();
-                LinkedList<String> stringRow = new LinkedList<>();
+                ArrayList<String> stringRow = new ArrayList<>();
 
                 while (iterator.hasNext()) {
                     stringRow.add(iterator.next().toString());

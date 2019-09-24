@@ -4,6 +4,8 @@ import com.chillimport.server.Cell;
 import com.chillimport.server.config.*;
 import org.junit.*;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -28,11 +30,12 @@ public class TimeParserTest {
     }
 
     @Test
-    public void shortTimeTest() {
+    public void shortTimeTest() throws MalformedURLException {
         String format = "yyyy:MM";
         StringColumn cfgTime = new StringColumn(format, 0);
         StringColumn[] all = {cfgTime};
-        cfg = new Configuration(0, "", "", 0, "2", all, null, null, DataType.CSV);
+        URL dummyURL = new URL("https://www.google.de/");
+        cfg = new Configuration(0, "", "", 0, "2", all, null, null, DataType.CSV, dummyURL);
 
         ZonedDateTime zdt = ZonedDateTime.now();
 
@@ -58,7 +61,7 @@ public class TimeParserTest {
         cfgTime = new StringColumn(format, 0);
         all = new StringColumn[1];
         all[0] = cfgTime;
-        cfg = new Configuration(0, "", "", 0, "2", all, null, null, DataType.CSV);
+        cfg = new Configuration(0, "", "", 0, "2", all, null, null, DataType.CSV, dummyURL);
 
         formatter = new DateTimeFormatterBuilder()
                 .appendPattern(format)
@@ -82,11 +85,12 @@ public class TimeParserTest {
     }
 
     @Test
-    public void externalZoneTest() {
+    public void externalZoneTest() throws MalformedURLException {
         String format = "yyyy:MM:dd HH:mm:ss";
         StringColumn cfgTime = new StringColumn(format, 0);
         StringColumn[] all = {cfgTime};
-        cfg = new Configuration(0, "", "", 0, "2", all, null, null, DataType.CSV);
+        URL dummyURL = new URL("https://www.google.de/");
+        cfg = new Configuration(0, "", "", 0, "2", all, null, null, DataType.CSV, dummyURL);
 
         ZonedDateTime zdt = ZonedDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
@@ -107,10 +111,11 @@ public class TimeParserTest {
     }
 
     @Test
-    public void zdtWithZoneTest() {
+    public void zdtWithZoneTest() throws MalformedURLException {
         StringColumn cfgTime = new StringColumn("yyyy:MM:dd HH:mm:ss VV", 0);
         StringColumn[] all = {cfgTime};
-        cfg = new Configuration(0, "", "", 0, "5", all, null, null, DataType.CSV);
+        URL dummyURL = new URL("https://www.google.de/");
+        cfg = new Configuration(0, "", "", 0, "5", all, null, null, DataType.CSV, dummyURL);
 
 
         ZonedDateTime zdt = ZonedDateTime.now();
@@ -125,11 +130,12 @@ public class TimeParserTest {
     }
 
     @Test(expected = DateTimeException.class)
-    public void zdtErrorTest() throws DateTimeException {
+    public void zdtErrorTest() throws DateTimeException, MalformedURLException {
         String format = "yyyy:MM:dd HH:mm:ss";
         StringColumn cfgTime = new StringColumn(format, 0);
         StringColumn[] all = {cfgTime};
-        cfg = new Configuration(0, "", "", 0, "2", all, null, null, DataType.CSV);
+        URL dummyURL = new URL("https://www.google.de/");
+        cfg = new Configuration(0, "", "", 0, "2", all, null, null, DataType.CSV, dummyURL);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
         ZonedDateTime zdt = ZonedDateTime.of(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter), ZoneId.systemDefault());
@@ -146,12 +152,13 @@ public class TimeParserTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void rowNullTest() throws NullPointerException {
+    public void rowNullTest() throws NullPointerException, MalformedURLException {
 
         String format = "yyyy:MM:dd HH:mm:ss";
         StringColumn cfgTime = new StringColumn(format, 0);
         StringColumn[] all = {cfgTime};
-        cfg = new Configuration(0, "", "", 0, "2", all, null, null, DataType.CSV);
+        URL dummyURL = new URL("https://www.google.de/");
+        cfg = new Configuration(0, "", "", 0, "2", all, null, null, DataType.CSV, dummyURL);
 
         ZonedDateTime zdt = ZonedDateTime.now();
 

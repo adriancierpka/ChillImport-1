@@ -11,13 +11,14 @@ public class ServerApplication {
      * @param args start up arguments
      */
     public static void main(String[] args) {
-
+    	/*
         String value = System.getenv("serverurl");
         if (value == null) {
             System.out.println("Server url was not specified. Peacefully aborting.");
             return;
         }
         FileManager.setServerURLOnStartup(value);
+        */
         String confvalue = System.getenv("basepath");
         if (confvalue == null) {
             System.out.println("Config path was not specified. Peacefully aborting.");

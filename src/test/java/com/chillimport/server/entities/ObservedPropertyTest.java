@@ -2,10 +2,15 @@ package com.chillimport.server.entities;
 
 import de.fraunhofer.iosb.ilt.sta.model.IdLong;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.chillimport.server.FrostSetup;
+
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -18,6 +23,14 @@ public class ObservedPropertyTest {
     private ObservedProperty op11;
     private ObservedProperty op12;
     private ObservedProperty op2;
+    
+    private static String url;
+    
+    @BeforeClass 
+    public static void beforeClass() {
+    	url = FrostSetup.getFrostURL();
+    }
+
 
     @Before
     public void setUp() {
@@ -44,10 +57,10 @@ public class ObservedPropertyTest {
     }
 
     @Test
-    public void convertToFrostStandard() {
+    public void convertToFrostStandard() throws MalformedURLException {
         de.fraunhofer.iosb.ilt.sta.model.ObservedProperty convertedOP = new de.fraunhofer.iosb.ilt.sta.model.ObservedProperty();
         try {
-            convertedOP = op2.convertToFrostStandard();
+            convertedOP = op2.convertToFrostStandard(new URL(url));
         } catch (URISyntaxException e) {
             System.out.println("URISyntaxException");
             e.printStackTrace();

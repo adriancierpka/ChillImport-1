@@ -9,7 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -99,7 +99,7 @@ public class ConfigurationManager {
         String tmpConfigPath = FileManager.getConfigPath().toString();
 
         String[] entries = new File(tmpConfigPath).list();
-        List<Configuration> allConfigs = new LinkedList<>();
+        List<Configuration> allConfigs = new ArrayList<>();
         if (entries == null) {
             return allConfigs;
         }

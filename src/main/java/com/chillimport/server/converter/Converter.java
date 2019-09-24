@@ -51,7 +51,7 @@ public interface Converter {
      * @param cfg    the configuration after which to Convert the file
      * @param rownum the number of rows to convert
      *
-     * @return the first rownum rows as a LinkedList of LinkedLists
+     * @return the first rownum rows as a ArrayList of ArrayLists
      *
      * @throws IOException when the file is not found
      */

@@ -6,6 +6,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -25,6 +27,7 @@ public class Configuration {
     private StreamObservation[] streamData;
     private MagicNumberMap[] mapOfMagicNumbers;
     private DataType dataType;
+    private URL frostURL;
 
     /**
      * A constructor for the Configuration class
@@ -48,7 +51,8 @@ public class Configuration {
                          StringColumn[] dateTime,
                          StreamObservation[] streamData,
                          MagicNumberMap[] mapOfMagicNumbers,
-                         DataType dataType) {
+                         DataType dataType,
+                         URL frostURL) {
         this.setId(id);
         this.setName(name);
         this.setDelimiter(delimiter);
@@ -58,6 +62,7 @@ public class Configuration {
         this.setStreamData(streamData);
         this.setMapOfMagicNumbers(mapOfMagicNumbers);
         this.setDataType(dataType);
+        this.setFrostURL(frostURL);
     }
 
     public Configuration() {
@@ -70,8 +75,9 @@ public class Configuration {
      * @param headerLines how many headerlines to use
      * @param delimiter   the delimiter
      * @param dType       the file data type
+     * @throws MalformedURLException 
      */
-    public Configuration(int headerLines, String delimiter, DataType dType) {
+    public Configuration(int headerLines, String delimiter, DataType dType) throws MalformedURLException {
         StringColumn[] dateTime1 = {new StringColumn("TT-HH", 10), new StringColumn("MM-SS", 12)};
         int[] arr1 = {2, 8, 5};
         StreamObservation[] streamData1 = {new StreamObservation(123456, true, arr1)};
@@ -91,6 +97,7 @@ public class Configuration {
         this.streamData = streamData1;
         this.mapOfMagicNumbers = map1;
         this.dataType = dType;
+        this.frostURL = new URL("https://www.google.com");
     }
 
 
@@ -288,6 +295,14 @@ public class Configuration {
     public void setDataType(DataType dataType) {
         this.dataType = dataType;
     }
+    
+    public URL getFrostURL() {
+    	return frostURL;
+    }
+    
+    public void setFrostURL(URL frostURL) {
+    	this.frostURL = frostURL;
+    }
 
 
     @Override
@@ -307,7 +322,8 @@ public class Configuration {
                 Arrays.equals(dateTime, that.dateTime) &&
                 Arrays.equals(streamData, that.streamData) &&
                 Arrays.equals(mapOfMagicNumbers, that.mapOfMagicNumbers) &&
-                dataType == that.dataType;
+                dataType == that.dataType &&
+                frostURL.equals(that.frostURL);
     }
 }
 

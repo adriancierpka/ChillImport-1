@@ -2,9 +2,15 @@ package com.chillimport.server.entities;
 
 import de.fraunhofer.iosb.ilt.sta.model.IdLong;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.chillimport.server.FrostSetup;
+
 import static org.junit.Assert.*;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 
 public class SensorTest {
@@ -14,6 +20,14 @@ public class SensorTest {
     private Sensor s12;
     private Sensor s2;
     private Sensor s3;
+    
+    private static String url;
+    
+    @BeforeClass 
+    public static void beforeClass() {
+    	url = FrostSetup.getFrostURL();
+    }
+
 
     @Before
     public void setUp() {
@@ -61,8 +75,8 @@ public class SensorTest {
     }
 
     @Test
-    public void convertToFrostStandard() {
-        de.fraunhofer.iosb.ilt.sta.model.Sensor convertedSensor = s2.convertToFrostStandard();
+    public void convertToFrostStandard() throws MalformedURLException {
+        de.fraunhofer.iosb.ilt.sta.model.Sensor convertedSensor = s2.convertToFrostStandard(new URL(url));
 
         assertEquals(convertedSensor.getName(), s2.getName());
         assertEquals(convertedSensor.getDescription(), s2.getDescription());

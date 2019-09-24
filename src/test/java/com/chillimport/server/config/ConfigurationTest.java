@@ -6,6 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -26,7 +28,7 @@ public class ConfigurationTest {
 
 
     @Before
-    public void create() throws JsonProcessingException, ConverterException {
+    public void create() throws JsonProcessingException, ConverterException, MalformedURLException {
         String zidc1 = "EAT";
         StringColumn[] dateTime1 = {new StringColumn("TT-HH", 10), new StringColumn("MM-SS", 12)};
         int[] arr1 = {2, 8, 5};
@@ -36,14 +38,16 @@ public class ConfigurationTest {
         map1[0] = new MagicNumberMap(1, "true", "wahr");
         map1[1] = new MagicNumberMap(2, "wahr", "true");
         map1[2] = new MagicNumberMap(4, "trueheit", "wahrheit");
+        
+        URL dummyURL = new URL("https://www.google.de/");
 
-        obj1 = new Configuration(10, "aConfiguration", ";", 3, zidc1, dateTime1, streamData1, map1, DataType.CSV);
+        obj1 = new Configuration(10, "aConfiguration", ";", 3, zidc1, dateTime1, streamData1, map1, DataType.CSV, dummyURL);
 
-        obj2 = new Configuration(10, "aConfiguration", ";", 3, zidc1, dateTime1, streamData1, map1, DataType.CSV);
+        obj2 = new Configuration(10, "aConfiguration", ";", 3, zidc1, dateTime1, streamData1, map1, DataType.CSV, dummyURL);
 
-        obj3 = new Configuration(100, "aConfiguration", ";", 3, zidc1, dateTime1, streamData1, map1, DataType.CSV);
+        obj3 = new Configuration(100, "aConfiguration", ";", 3, zidc1, dateTime1, streamData1, map1, DataType.CSV, dummyURL);
 
-        obj4 = new Configuration(10, "aConfiguration", ";", 3, zidc1, dateTime1, streamData1, map1, DataType.EXCEL);
+        obj4 = new Configuration(10, "aConfiguration", ";", 3, zidc1, dateTime1, streamData1, map1, DataType.EXCEL, dummyURL);
 
 
         obj1string = Configuration.serialize(obj1);
@@ -52,6 +56,7 @@ public class ConfigurationTest {
 
         obj5 = Configuration.convertToJava(obj1string);
         obj6 = Configuration.convertToJava(obj3string);
+       
     }
 
 
@@ -101,7 +106,7 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void constructor () {
+    public void constructor () throws MalformedURLException {
         Configuration config = new Configuration(10,";", DataType.CSV);
         Configuration config3 = new Configuration(10,";", DataType.CSV);
         Configuration config2 = new Configuration(12,";", DataType.CSV);

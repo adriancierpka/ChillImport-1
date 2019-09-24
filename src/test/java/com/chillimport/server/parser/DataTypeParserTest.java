@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 
 public class DataTypeParserTest {
@@ -21,7 +21,7 @@ public class DataTypeParserTest {
 
     @Test
     public void convertDataTypesToTableDataTypes() {
-        LinkedList<String> stringList = new LinkedList<>();
+        ArrayList<String> stringList = new ArrayList<>();
 
         stringList.add("http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation (URL)");
         stringList.add("http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation");

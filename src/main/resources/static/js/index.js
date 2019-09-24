@@ -26,6 +26,9 @@ function changedHeaderLines(lines) {
 }
 
 
+
+
+
 /**
  * Opens the accordion with the given id
  * @param accId the id of the accordion

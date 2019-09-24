@@ -1,8 +1,12 @@
 package com.chillimport.server.controller;
 
 import com.chillimport.server.FileManager;
+import com.chillimport.server.FrostSetup;
 import com.chillimport.server.builders.LocationBuilder;
 import com.chillimport.server.utility.SensorThingsServiceFactory;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import de.fraunhofer.iosb.ilt.sta.ServiceFailureException;
 import de.fraunhofer.iosb.ilt.sta.dao.LocationDao;
 import de.fraunhofer.iosb.ilt.sta.model.EntityType;
@@ -25,6 +29,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -46,31 +51,41 @@ public class LocationControllerTest {
     private MockMvc mvc;
 
     private String locationString;
+    private String locUrlString;
+    
+    private static String url;
 
     @Mock
     private SensorThingsServiceFactory sensorThingsServiceFactory;
 
     @InjectMocks
     private LocationController locationController;
-
+    
+    @BeforeClass 
+    public static void beforeClass() {
+    	url = FrostSetup.getFrostURL();
+    }
+    
     @Before
-    public void setup() {
+    public void setup() throws JsonProcessingException {
         MockitoAnnotations.initMocks(this);
         mvc = MockMvcBuilders.standaloneSetup(locationController).build();
 
         locationString = "{\"name\":\"UofC CCIT\",\"description\":\"University of Calgary, CCIT building\",\"encoding_TYPE\":\"application/vnd" +
                 ".geo+json\"," +
                 "\"location\":\"{\\\"type\\\": \\\"Point\\\", \\\"coordinates\\\": [-114.133, 51.08]}\"}";
-
+        
+        com.chillimport.server.entities.Location loc = new com.chillimport.server.entities.Location("UofC CCIT","University of Calgary, CCIT building","application/vndgeo+json","{\"type\": \"Point\", \"coordinates\": [-114.133, 51.08]}");
+        ObjectMapper mapper = new ObjectMapper();
+        locUrlString = mapper.writeValueAsString(new EntityStringWrapper<com.chillimport.server.entities.Location>(loc, url)); 
     }
 
     @Test
     public void create() throws Exception {
 
-        when(sensorThingsServiceFactory.build()).thenReturn(new SensorThingsService(FileManager.getServerURL()));
+        when(sensorThingsServiceFactory.build(Mockito.any())).thenReturn(new SensorThingsService(new URL(url)));
 
-        this.mvc.perform(post("/location/create").contentType("application/json").content(locationString)).andDo(print()).andExpect(status()
-                                                                                                                                            .isOk());
+        this.mvc.perform(post("/location/create").contentType("application/json").content(locUrlString)).andDo(print()).andExpect(status().isOk());
     }
 
     @Test
@@ -92,9 +107,9 @@ public class LocationControllerTest {
         when(locDaoMock.find(1)).thenReturn(locMock);
         when(sensorThingsServiceMock.locations()).thenReturn(locDaoMock);
 
-        when(sensorThingsServiceFactory.build()).thenReturn(sensorThingsServiceMock);
+        when(sensorThingsServiceFactory.build(Mockito.any())).thenReturn(sensorThingsServiceMock);
 
-        MvcResult result = this.mvc.perform(get("/location/single").param("id", "1")).andDo(print()).andExpect(status().isOk()).andReturn();
+        MvcResult result = this.mvc.perform(get("/location/single").param("id", "1").param("frostUrlString", url)).andDo(print()).andExpect(status().isOk()).andReturn();
 
         Assert.assertEquals(result.getResponse().getContentAsString(),
                             "{\"name\":\"MockLocation\",\"description\":\"descr\",\"frostId\":\"1\",\"encoding_TYPE\":\"application/vnd.geo+json\",\"location\":\"{\\\"type\\\": \\\"Point\\\",\\\"coordinates\\\": [11.11, 123.45]}\"}");
@@ -127,9 +142,9 @@ public class LocationControllerTest {
         when(queryMock.list()).thenReturn(locMocks);
         when(locDaoMock.query()).thenReturn(queryMock);
         when(sensorThingsServiceMock.locations()).thenReturn(locDaoMock);
-        when(sensorThingsServiceFactory.build()).thenReturn(sensorThingsServiceMock);
+        when(sensorThingsServiceFactory.build(Mockito.any())).thenReturn(sensorThingsServiceMock);
 
-        MvcResult result = this.mvc.perform(get("/location/all")).andDo(print()).andExpect(status().isOk()).andReturn();
+        MvcResult result = this.mvc.perform(get("/location/all").param("frostUrlString", url)).andDo(print()).andExpect(status().isOk()).andReturn();
 
         Assert.assertEquals(result.getResponse().getContentAsString(),
                             "[{\"name\":\"MockLocation\",\"description\":\"descr\",\"frostId\":\"1\",\"encoding_TYPE\":\"application/vnd.geo+json\",\"location\":\"{\\\"type\\\": \\\"Point\\\",\\\"coordinates\\\": [11.11, 123.45]}\"},{\"name\":\"MockLocation\",\"description\":\"descr\",\"frostId\":\"2\",\"encoding_TYPE\":\"application/vnd.geo+json\",\"location\":\"{\\\"type\\\": \\\"Point\\\",\\\"coordinates\\\": [11.11, 123.45]}\"}]");
@@ -138,15 +153,15 @@ public class LocationControllerTest {
     @Test
     public void malformedURLEx() throws Exception {
 
-        when(sensorThingsServiceFactory.build()).thenThrow(MalformedURLException.class);
+        when(sensorThingsServiceFactory.build(Mockito.any())).thenThrow(MalformedURLException.class);
 
 
-        this.mvc.perform(post("/location/create").contentType("application/json").content(locationString)).andDo(print()).andExpect(status().isNotFound()).andExpect(
+        this.mvc.perform(post("/location/create").contentType("application/json").content(locUrlString)).andDo(print()).andExpect(status().isNotFound()).andExpect(
                 content().string(
                         "Malformed URL for Frost-Server."));
-        this.mvc.perform(get("/location/single").param("id", "1")).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
+        this.mvc.perform(get("/location/single").param("id", "1").param("frostUrlString", url)).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
                 "Malformed URL for Frost-Server."));
-        this.mvc.perform(get("/location/all")).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
+        this.mvc.perform(get("/location/all").param("frostUrlString", url)).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
                 "Malformed URL for Frost-Server."));
 
     }
@@ -154,14 +169,14 @@ public class LocationControllerTest {
     @Test
     public void uRISyntaxEx() throws Exception {
 
-        when(sensorThingsServiceFactory.build()).thenThrow(URISyntaxException.class);
+        when(sensorThingsServiceFactory.build(Mockito.any())).thenThrow(URISyntaxException.class);
 
-        this.mvc.perform(post("/location/create").contentType("application/json").content(locationString)).andExpect(status().isNotFound()).andDo(
+        this.mvc.perform(post("/location/create").contentType("application/json").content(locUrlString)).andExpect(status().isNotFound()).andDo(
                 print()).andExpect(content().string(
                 "Wrong URI for Frost-Server."));
-        this.mvc.perform(get("/location/single").param("id", "1")).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
+        this.mvc.perform(get("/location/single").param("id", "1").param("frostUrlString", url)).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
                 "Wrong URI for Frost-Server."));
-        this.mvc.perform(get("/location/all")).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
+        this.mvc.perform(get("/location/all").param("frostUrlString", url)).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
                 "Wrong URI for Frost-Server."));
 
     }
@@ -176,12 +191,12 @@ public class LocationControllerTest {
         when(queryMock.list()).thenThrow(ServiceFailureException.class);
         when(locationDaoMock.query()).thenReturn(queryMock);
         when(sensorThingsServiceMock.locations()).thenReturn(locationDaoMock);
-        when(sensorThingsServiceFactory.build()).thenReturn(sensorThingsServiceMock);
+        when(sensorThingsServiceFactory.build(Mockito.any())).thenReturn(sensorThingsServiceMock);
 
         this.mvc.perform(get("/location/single").param("id",
-                                                       "1")).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
+                                                       "1").param("frostUrlString", url)).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
                 "Failed to find Location on server."));
-        this.mvc.perform(get("/location/all")).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
+        this.mvc.perform(get("/location/all").param("frostUrlString", url)).andDo(print()).andExpect(status().isNotFound()).andExpect(content().string(
                 "Failed to find Locations on server."));
 
 

@@ -11,6 +11,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -39,10 +40,12 @@ public class ConfigurationManagerTest {
         map1[0] = new MagicNumberMap(1, "true", "wahr");
         map1[1] = new MagicNumberMap(2, "wahr", "true");
         map1[2] = new MagicNumberMap(4, "trueheit", "wahrheit");
+        
+        URL dummyURL = new URL("https://www.google.de/");
 
-        config1 = new Configuration(3825918, "aConfiguration", ";", 3, zidc1, dateTime1, streamData1, map1, DataType.CSV);
-        config2 = new Configuration(25857854, "aConfiguration", ";", 3, zidc1, dateTime1, streamData1, map1, DataType.CSV);
-        config3 = new Configuration(7890002, "aConfiguration", ";", 3, zidc1, dateTime1, streamData1, map1, DataType.CSV);
+        config1 = new Configuration(3825918, "aConfiguration", ";", 3, zidc1, dateTime1, streamData1, map1, DataType.CSV, dummyURL);
+        config2 = new Configuration(25857854, "aConfiguration", ";", 3, zidc1, dateTime1, streamData1, map1, DataType.CSV, dummyURL);
+        config3 = new Configuration(7890002, "aConfiguration", ";", 3, zidc1, dateTime1, streamData1, map1, DataType.CSV, dummyURL);
 
         //Create temp file for tests and set the config path to it
 

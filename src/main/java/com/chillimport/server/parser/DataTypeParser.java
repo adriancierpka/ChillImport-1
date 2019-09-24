@@ -67,12 +67,12 @@ public class DataTypeParser {
 
             if (observationColumns[i].isMultiStream()) {
                 MultiDatastream mds = sts.multiDatastreams().find(observationColumns[i].getDsID());
-                LinkedList<String> dsTypes = new LinkedList<>(mds.getMultiObservationDataTypes());
+                ArrayList<String> dsTypes = new ArrayList<>(mds.getMultiObservationDataTypes());
                 newDataTypes = this.convertDataTypesToTableDataTypes(dsTypes); //Datentypen abrufen und konvertieren
             }
             else {
                 Datastream ds = sts.datastreams().find(observationColumns[i].getDsID());
-                LinkedList<String> dsTypes = new LinkedList<>();
+                ArrayList<String> dsTypes = new ArrayList<>();
                 dsTypes.add(ds.getObservationType());
                 newDataTypes = this.convertDataTypesToTableDataTypes(dsTypes); //selbes für Single-DS
             }
@@ -164,7 +164,7 @@ public class DataTypeParser {
      *
      * @return an array containing the corresponding Table data types
      */
-    public static TableDataTypes[] convertDataTypesToTableDataTypes(LinkedList<String> dsTypes) {
+    public static TableDataTypes[] convertDataTypesToTableDataTypes(ArrayList<String> dsTypes) {
         Iterator<String> iterator = dsTypes.iterator();
         TableDataTypes[] newDataTypes = new TableDataTypes[dsTypes.size()];
         int pos = 0;

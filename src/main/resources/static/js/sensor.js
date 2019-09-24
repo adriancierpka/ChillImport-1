@@ -27,7 +27,8 @@ function initSensor() {
 
 function createSensor() {
 
-
+	
+	
     var name = $("#senname").val();
     var desc = $("#sendescription").val();
     var encType = $("#senEncTypes").val();
@@ -37,11 +38,17 @@ function createSensor() {
     }
     var meta = $("#senmeta").val();
 
-    var mydata = {
+    var mySensor = {
         name: name,
         description: desc,
         encoding_TYPE: encType,
         metadata: meta
+    };
+    var url = document.getElementById("serverurlbox").innerText;
+    
+    var mydata = {
+    	entity: mySensor,
+    	string: url
     };
     $.ajax({
         type: "POST",

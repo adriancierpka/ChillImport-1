@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.util.LinkedList;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -25,23 +26,33 @@ import java.util.List;
  */
 @RestController
 public class LocationController extends EntityController<Location> {
-
+	
+	
     @Autowired
     private SensorThingsServiceFactory sensorThingsServiceFactory;
 
     @Override
     @RequestMapping(value = "/location/create", method = RequestMethod.POST)
-    public ResponseEntity<?> create(@RequestBody Location location) {
+    public ResponseEntity<?> create(@RequestBody EntityStringWrapper<Location> locstring) {
         de.fraunhofer.iosb.ilt.sta.model.Location frostLocation;
+        Location location = locstring.getEntity(); 
+        URL frostUrl = null;
+		try {
+			frostUrl = new URL(locstring.getString());
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        
         try {
-            frostLocation = location.convertToFrostStandard();
+            frostLocation = location.convertToFrostStandard(frostUrl);
         } catch (IOException e) {
             LogManager.getInstance().writeToLog(e.getMessage(), true);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         SensorThingsService service;
         try {
-            service = sensorThingsServiceFactory.build();
+            service = sensorThingsServiceFactory.build(frostUrl);
         } catch (MalformedURLException e) {
             LogManager.getInstance().writeToLog("Malformed URL for Frost-Server.", true);
             ErrorHandler.getInstance().addRows(-1, e);
@@ -63,10 +74,10 @@ public class LocationController extends EntityController<Location> {
     @Override
     @RequestMapping(value = "/location/single", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> get(int id) {
+    public ResponseEntity<?> get(int id, String frostUrlString) {
         Location location;
         try {
-            SensorThingsService service = sensorThingsServiceFactory.build();
+            SensorThingsService service = sensorThingsServiceFactory.build(new URL(frostUrlString));
             location = new Location(service.locations().find(id));
         } catch (ServiceFailureException e) {
             LogManager.getInstance().writeToLog("Could not retrieve Location.", true);
@@ -86,11 +97,11 @@ public class LocationController extends EntityController<Location> {
 
     @Override
     @RequestMapping(value = "/location/all", method = RequestMethod.GET)
-    public ResponseEntity<?> getAll() {
+    public ResponseEntity<?> getAll(@RequestParam String frostUrlString) {
         EntityList<de.fraunhofer.iosb.ilt.sta.model.Location> frostLocations;
-        List<Location> locations = new LinkedList<>();
+        List<Location> locations = new ArrayList<>();
         try {
-            SensorThingsService service = sensorThingsServiceFactory.build();
+            SensorThingsService service = sensorThingsServiceFactory.build(new URL(frostUrlString));
             frostLocations = service.locations().query().list();
         } catch (ServiceFailureException e) {
             LogManager.getInstance().writeToLog("Could not retrieve Locations.", true);

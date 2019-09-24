@@ -37,7 +37,7 @@ public class ImportController {
     @Autowired
     private ImportController(FileManager manager) {
 
-        uploadQueue = new LinkedList<>();
+        uploadQueue = new ArrayDeque<>();
         fileManager = manager;
     }
 
@@ -90,11 +90,12 @@ public class ImportController {
      * @param filename the file to preview
      *
      * @return the preview as a 2d JSON array
+     * @throws MalformedURLException 
      */
     @RequestMapping(value = "/preview", method = RequestMethod.GET)
-    public ResponseEntity<?> getPreview(@RequestParam String filename, @RequestParam int headerLines, @RequestParam String delimiter) {
+    public ResponseEntity<?> getPreview(@RequestParam String filename, @RequestParam int headerLines, @RequestParam String delimiter) throws MalformedURLException {
         Configuration sampleConfig;
-        LinkedList<LinkedList<String>> firstThreeRowsOfTable;
+        ArrayList<ArrayList<String>> firstThreeRowsOfTable;
 
         if (filename.endsWith(".xls") ||
                 filename.endsWith(".xlsx")) {
@@ -179,7 +180,7 @@ public class ImportController {
         LogManager logManager = LogManager.getInstance();
         ErrorHandler errorHandler = ErrorHandler.getInstance();
         try {
-            if (!new HTMLController().pingFROSTServer()) {
+            if (!new HTMLController().pingFROSTServer(cfg.getFrostURL())) {
                 logManager.writeToLog("FROST-Server not reachable", true);
                 errorHandler.addRows(-1, new ServerNotActiveException());
                 return new ResponseEntity<>("FROST-Server not reachable", HttpStatus.SERVICE_UNAVAILABLE);

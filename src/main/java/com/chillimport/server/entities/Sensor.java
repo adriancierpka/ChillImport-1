@@ -1,5 +1,7 @@
 package com.chillimport.server.entities;
 
+import java.net.URL;
+
 import com.chillimport.server.FileManager;
 import de.fraunhofer.iosb.ilt.sta.service.SensorThingsService;
 
@@ -72,11 +74,11 @@ public class Sensor extends Entity {
      *
      * @return frost standard sensor
      */
-    public de.fraunhofer.iosb.ilt.sta.model.Sensor convertToFrostStandard() {
+    public de.fraunhofer.iosb.ilt.sta.model.Sensor convertToFrostStandard(URL frostUrl) {
         if (!(getFrostId() == null || getFrostId().isEmpty())) {
             SensorThingsService service;
             try {
-                service = new SensorThingsService(FileManager.getServerURL());
+                service = new SensorThingsService(frostUrl);
                 return service.sensors().find(Long.parseLong(getFrostId()));
             } catch (Exception e) {
             }

@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.time.DateTimeException;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -57,8 +58,8 @@ public class UploadHandler {
      *
      * @throws IOException if the file is not of type excel or CSV
      */
-    public static LinkedList<LinkedList<String>> preview(File file, Configuration sampleConfig) throws IOException {
-        LinkedList<LinkedList<String>> firstThreeRowsOfTable;
+    public static ArrayList<ArrayList<String>> preview(File file, Configuration sampleConfig) throws IOException {
+        ArrayList<ArrayList<String>> firstThreeRowsOfTable;
 
         switch (sampleConfig.getDataType()) {
             case EXCEL:
@@ -106,11 +107,11 @@ public class UploadHandler {
         Table table = this.convertFile(file, cfg);
 
 
-        SensorThingsService service = new SensorThingsService(FileManager.getServerURL());
+        SensorThingsService service = new SensorThingsService(cfg.getFrostURL());
 
 
         if (FileManager.getUsername() != null) {
-            this.authenticate(service); //tries to add username and password to the Service
+            this.authenticate(service, cfg.getFrostURL()); //tries to add username and password to the Service
         }
 
         this.size = table.getRowCount();
@@ -175,7 +176,7 @@ public class UploadHandler {
          *
          * @throws MalformedURLException when the request method is not GET, PUT, POST or something else
          */
-    private void authenticate(SensorThingsService service) throws MalformedURLException {
+    private void authenticate(SensorThingsService service, URL frostUrl) throws MalformedURLException {
         //to see how this works read the Javadoc ;-)
 
         TokenManager tm = service.getTokenManager();
@@ -184,7 +185,7 @@ public class UploadHandler {
         DefaultHttpRequestFactory factory = new DefaultHttpRequestFactory();
         try {
 
-            HttpRequest req = factory.newHttpRequest("GET", FileManager.getServerURL().toString());
+            HttpRequest req = factory.newHttpRequest("GET", frostUrl.toString());
             req.addHeader("Authentication", "Basic " + username);
             tm.addAuthHeader(req);
 
@@ -209,7 +210,7 @@ public class UploadHandler {
 
         StreamObservation[] observationColumns = cfg.getStreamData();
         TableDataTypes[] newDataTypes = null;
-        LinkedList<String> dsTypes = new LinkedList<>();
+        ArrayList<String> dsTypes = new ArrayList<>();
         ArrayList<Integer> positions = new ArrayList<>();
 
         for (StreamObservation stream : observationColumns) {

@@ -6,6 +6,7 @@ import de.fraunhofer.iosb.ilt.sta.service.SensorThingsService;
 import org.geojson.GeoJsonObject;
 
 import java.io.IOException;
+import java.net.URL;
 
 
 /**
@@ -89,13 +90,13 @@ public class Location extends Entity {
      *
      * @throws IOException if converting from String to GeoJson fails
      */
-    public de.fraunhofer.iosb.ilt.sta.model.Location convertToFrostStandard() throws IOException {
+    public de.fraunhofer.iosb.ilt.sta.model.Location convertToFrostStandard(URL frostUrl) throws IOException {
         de.fraunhofer.iosb.ilt.sta.model.Location frostLocation;
 
         if (!(getFrostId() == null || getFrostId().isEmpty())) {
             SensorThingsService service;
             try {
-                service = new SensorThingsService(FileManager.getServerURL());
+                service = new SensorThingsService(frostUrl);
                 frostLocation = service.locations().find(Long.parseLong(getFrostId()));
                 return frostLocation;
             } catch (Exception e) {

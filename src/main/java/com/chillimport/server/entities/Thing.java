@@ -7,6 +7,7 @@ import de.fraunhofer.iosb.ilt.sta.ServiceFailureException;
 import de.fraunhofer.iosb.ilt.sta.service.SensorThingsService;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -99,12 +100,12 @@ public class Thing extends Entity {
      *
      * @throws IOException if convertion from String to GeoJson fails (in location)
      */
-    public de.fraunhofer.iosb.ilt.sta.model.Thing convertToFrostStandard() throws IOException {
+    public de.fraunhofer.iosb.ilt.sta.model.Thing convertToFrostStandard(URL frostUrl) throws IOException {
 
         if (!(getFrostId() == null || getFrostId().isEmpty())) {
             SensorThingsService service;
             try {
-                service = new SensorThingsService(FileManager.getServerURL());
+                service = new SensorThingsService(frostUrl);
                 return service.things().find(Long.parseLong(getFrostId()));
             } catch (Exception e) {
             }
@@ -114,7 +115,7 @@ public class Thing extends Entity {
         thing.setProperties(this.properties);
 
         //check if Loacation already exists on server, otherwise convert Location to frost-standard
-        de.fraunhofer.iosb.ilt.sta.model.Location frostLocation = this.location.convertToFrostStandard();
+        de.fraunhofer.iosb.ilt.sta.model.Location frostLocation = this.location.convertToFrostStandard(frostUrl);
         thing.getLocations().add(frostLocation);
 
         return thing;

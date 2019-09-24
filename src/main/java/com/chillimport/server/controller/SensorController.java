@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.util.LinkedList;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -30,11 +31,14 @@ public class SensorController extends EntityController<Sensor> {
 
     @Override
     @RequestMapping(value = "/sensor/create", method = RequestMethod.POST)
-    public ResponseEntity<?> create(@RequestBody Sensor sensor) {
-        de.fraunhofer.iosb.ilt.sta.model.Sensor frostSensor = sensor.convertToFrostStandard();
+    public ResponseEntity<?> create(@RequestBody EntityStringWrapper<Sensor> sensorWrapper) {
+        Sensor sensor = sensorWrapper.getEntity();
         try {
-            SensorThingsService service = sensorThingsServiceFactory.build();
+        	URL frostUrl = new URL(sensorWrapper.getString());
+        	de.fraunhofer.iosb.ilt.sta.model.Sensor frostSensor = sensor.convertToFrostStandard(frostUrl);
+            SensorThingsService service = sensorThingsServiceFactory.build(frostUrl);
             service.create(frostSensor);
+            return new ResponseEntity<>(new Sensor(frostSensor), HttpStatus.OK);
         } catch (MalformedURLException e) {
             LogManager.getInstance().writeToLog("Malformed URL for Frost-Server.", true);
             ErrorHandler.getInstance().addRows(-1, e);
@@ -46,18 +50,16 @@ public class SensorController extends EntityController<Sensor> {
         } catch (ServiceFailureException e) {
             LogManager.getInstance().writeToLog("Failed to create Sensor on server.", true);
             return new ResponseEntity<>("Failed to create Sensor on server.", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        return new ResponseEntity<>(new Sensor(frostSensor), HttpStatus.OK);
+        }   
     }
 
     @Override
     @RequestMapping(value = "/sensor/single", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> get(@RequestParam int id) {
+    public ResponseEntity<?> get(@RequestParam int id, @RequestParam String frostUrlString) {
         Sensor sensor;
         try {
-            SensorThingsService service = sensorThingsServiceFactory.build();
+            SensorThingsService service = sensorThingsServiceFactory.build(new URL(frostUrlString));
             sensor = new Sensor(service.sensors().find(id));
         } catch (MalformedURLException e) {
             LogManager.getInstance().writeToLog("Malformed URL for Frost-Server.", true);
@@ -77,11 +79,11 @@ public class SensorController extends EntityController<Sensor> {
 
     @Override
     @RequestMapping(value = "/sensor/all", method = RequestMethod.GET)
-    public ResponseEntity<?> getAll() {
+    public ResponseEntity<?> getAll(@RequestParam String frostUrlString) {
         EntityList<de.fraunhofer.iosb.ilt.sta.model.Sensor> frostSensors;
-        List<Sensor> sensors = new LinkedList<>();
+        List<Sensor> sensors = new ArrayList<>();
         try {
-            SensorThingsService service = sensorThingsServiceFactory.build();
+            SensorThingsService service = sensorThingsServiceFactory.build(new URL(frostUrlString));
             frostSensors = service.sensors().query().list();
         } catch (MalformedURLException e) {
             LogManager.getInstance().writeToLog("Malformed URL for Frost-Server.", true);

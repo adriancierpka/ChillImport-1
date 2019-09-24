@@ -8,9 +8,14 @@ function initDatastream() {
 }
 
 function getSensors() {
+	var url = document.getElementById("serverurlbox").innerText;
+	var mydata = {
+		frostUrlString: url	
+	};
     $.ajax({
         type: "GET",
         url: "sensor/all",
+        data: mydata,
         success: function (response) {
             var json = JSON.stringify(response, null, 4);
             var jsonparsed = JSON.parse(json);
@@ -38,9 +43,15 @@ function getSensors() {
 
 
 function getOprops() {
+	var url = document.getElementById("serverurlbox").innerText;
+	var mydata = {
+		frostUrlString: url	
+	};
+	
     $.ajax({
         type: "GET",
         url: "observedProperty/all",
+        data: mydata,
         success: function (response) {
             var json = JSON.stringify(response, null, 4);
             var jsonparsed = JSON.parse(json);
@@ -93,7 +104,7 @@ function createDS() {
     }
 
     var thing = JSON.parse($('#strlabel').attr('data-value'));
-    var mydata = {
+    var myDS = {
         name: $('#streamname').val(),
         description: $('#streamdesc').val(),
         observation_types: types,
@@ -102,7 +113,15 @@ function createDS() {
         sensor: getSensor(),
         thing: thing
     };
-
+    
+    var url = document.getElementById("serverurlbox").innerText;
+    
+    var mydata = {
+    	entity: myDS,
+    	string: url
+    };
+    
+    
     $.ajax({
         type: "POST",
         url: "datastream/create",

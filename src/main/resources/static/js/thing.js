@@ -1,29 +1,40 @@
 function getLocations() {
-    $.ajax({
-        type: "GET",
-        url: "location/all",
-        success: function (response) {
-            var json = JSON.stringify(response, null, 4);
-            var jsonparsed = JSON.parse(json);
+	var url = document.getElementById("serverurlbox").innerText;
+	
+	var valid = false;
+	var mydata = {frostUrlString: url};
+	if (url == "") {
+		addToLog("FROST-URL can't be empty");
+		alert("FROST-URL can't be empty")
+		valid = false;
+	} else {
+		$.ajax({
+	        type: "GET",
+	        url: "location/all",
+	        data: mydata,
+	        success: function (response) {
+	            var json = JSON.stringify(response, null, 4);
+	            var jsonparsed = JSON.parse(json);
 
-            var list = $('#locations');
-            list.empty().append(new Option('', '', null, null));
-            for (var i = 0; i < jsonparsed.length; i++) {
-                var option = new Option(jsonparsed[i].name + ' (' + jsonparsed[i].frostId + ')', jsonparsed[i].name + ' (' + jsonparsed[i].frostId + ')', null, null);
-                option.setAttribute('data-value', JSON.stringify(jsonparsed[i], null, 4));
-                list.append(option);
-            }
-            list.select2({
-                placeholder: 'Choose a location',
-                width: 'style',
-                dropdownAutoWidth: true
-            }).trigger('change');
-        },
-        error: function (e) {
-            addToLog(e.responseText);
-        }
+	            var list = $('#locations');
+	            list.empty().append(new Option('', '', null, null));
+	            for (var i = 0; i < jsonparsed.length; i++) {
+	                var option = new Option(jsonparsed[i].name + ' (' + jsonparsed[i].frostId + ')', jsonparsed[i].name + ' (' + jsonparsed[i].frostId + ')', null, null);
+	                option.setAttribute('data-value', JSON.stringify(jsonparsed[i], null, 4));
+	                list.append(option);
+	            }
+	            list.select2({
+	                placeholder: 'Choose a location',
+	                width: 'style',
+	                dropdownAutoWidth: true
+	            }).trigger('change');
+	        },
+	        error: function (e) {
+	            addToLog(e.responseText);
+	        }
 
-    });
+	    });
+	}
 
 }
 
@@ -50,12 +61,18 @@ function createThing() {
         alert("Invalid Location (Must exist on the server)");
         return;
     }
-
-    var mydata = {
+    var url = document.getElementById("serverurlbox").innerText;
+    
+    var thing = {
         name: $('#name').val(),
         description: $('#desc').val(),
         properties: props,
         location: JSON.parse(loc)
+    };
+    
+    var mydata = {
+    	entity: thing,
+    	string: url
     };
 
     $.ajax({

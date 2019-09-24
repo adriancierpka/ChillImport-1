@@ -6,14 +6,15 @@ import org.springframework.stereotype.Service;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 
 @Service
 public class SensorThingsServiceFactory {
 
-    public SensorThingsService build() throws MalformedURLException, URISyntaxException {
+    public SensorThingsService build(URL frostUrl) throws MalformedURLException, URISyntaxException {
 
-        return new SensorThingsService(FileManager.getServerURL());
+        return new SensorThingsService(frostUrl);
 
     }
 }

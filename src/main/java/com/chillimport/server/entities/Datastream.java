@@ -10,7 +10,8 @@ import de.fraunhofer.iosb.ilt.sta.service.SensorThingsService;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.LinkedList;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -63,14 +64,14 @@ public class Datastream extends Entity {
     public Datastream(de.fraunhofer.iosb.ilt.sta.model.Datastream ds) throws ServiceFailureException {
         super(ds.getName(), ds.getDescription());
         this.setFrostId(ds.getId().getJson());
-        this.observation_types = new LinkedList<>();
+        this.observation_types = new ArrayList<>();
         this.observation_types.add(ds.getObservationType());
         //convert unit of measurement
-        List<UnitOfMeasurement> units = new LinkedList<>();
+        List<UnitOfMeasurement> units = new ArrayList<>();
         UnitOfMeasurement unit = new UnitOfMeasurement(ds.getUnitOfMeasurement());
         units.add(unit);
         this.units_of_measurement = units;
-        this.observedProperties = new LinkedList<>();
+        this.observedProperties = new ArrayList<>();
         this.observedProperties.add(new ObservedProperty(ds.getObservedProperty()));
 
         this.sensor = new Sensor(ds.getSensor());
@@ -90,12 +91,13 @@ public class Datastream extends Entity {
         this.setFrostId(mds.getId().getJson());
         this.observation_types = mds.getMultiObservationDataTypes();
 
-        this.units_of_measurement = new LinkedList<>();
+        this.units_of_measurement = new ArrayList<>();
         for (de.fraunhofer.iosb.ilt.sta.model.ext.UnitOfMeasurement unit : mds.getUnitOfMeasurements()) {
             this.units_of_measurement.add(new UnitOfMeasurement(unit));
         }
 
-        this.observedProperties = new LinkedList<>();
+        this.observedProperties = new ArrayList<>();
+        
         for (de.fraunhofer.iosb.ilt.sta.model.ObservedProperty op : mds.getObservedProperties()) {
             this.observedProperties.add(new ObservedProperty(op));
         }
@@ -182,12 +184,12 @@ public class Datastream extends Entity {
      *
      * @throws IOException if convertion from String to GeoJson fails
      */
-    public de.fraunhofer.iosb.ilt.sta.model.Datastream convertToFrostDatastream() throws IOException, URISyntaxException {
+    public de.fraunhofer.iosb.ilt.sta.model.Datastream convertToFrostDatastream(URL frostUrl) throws IOException, URISyntaxException {
 
         if (!(getFrostId() == null || getFrostId().isEmpty())) {
             SensorThingsService service;
             try {
-                service = new SensorThingsService(FileManager.getServerURL());
+                service = new SensorThingsService(frostUrl);
                 return service.datastreams().find(Long.parseLong(getFrostId()));
             } catch (Exception e) {
             }
@@ -199,11 +201,11 @@ public class Datastream extends Entity {
                                                                                                          this.units_of_measurement.get(0).convertToFrostStandard());
 
 
-        ds.setObservedProperty(this.observedProperties.get(0).convertToFrostStandard());
+        ds.setObservedProperty(this.observedProperties.get(0).convertToFrostStandard(frostUrl));
 
-        ds.setSensor(this.sensor.convertToFrostStandard());
+        ds.setSensor(this.sensor.convertToFrostStandard(frostUrl));
 
-        de.fraunhofer.iosb.ilt.sta.model.Thing frostThing = this.thing.convertToFrostStandard();
+        de.fraunhofer.iosb.ilt.sta.model.Thing frostThing = this.thing.convertToFrostStandard(frostUrl);
         ds.setThing(frostThing);
 
         return ds;
@@ -216,32 +218,32 @@ public class Datastream extends Entity {
      *
      * @throws IOException if convertion from String to GeoJson fails (in location)
      */
-    public MultiDatastream convertToFrostMultiDatastream() throws IOException, URISyntaxException {
+    public MultiDatastream convertToFrostMultiDatastream(URL frostUrl) throws IOException, URISyntaxException {
         if (!(getFrostId() == null || getFrostId().isEmpty())) {
             SensorThingsService service;
             try {
-                service = new SensorThingsService(FileManager.getServerURL());
+                service = new SensorThingsService(frostUrl);
                 return service.multiDatastreams().find(Long.parseLong(getFrostId()));
             } catch (Exception e) {
             }
         }
 
-        List<de.fraunhofer.iosb.ilt.sta.model.ext.UnitOfMeasurement> units = new LinkedList<>();
+        List<de.fraunhofer.iosb.ilt.sta.model.ext.UnitOfMeasurement> units = new ArrayList<>();
         for (UnitOfMeasurement unit : this.units_of_measurement) {
             units.add(unit.convertToFrostStandard());
         }
 
         de.fraunhofer.iosb.ilt.sta.model.ObservedProperty op = new de.fraunhofer.iosb.ilt.sta.model.ObservedProperty();
-        List<de.fraunhofer.iosb.ilt.sta.model.ObservedProperty> observedProperties = new LinkedList<>();
+        List<de.fraunhofer.iosb.ilt.sta.model.ObservedProperty> observedProperties = new ArrayList<>();
         for (ObservedProperty observedProperty : this.observedProperties) {
-            observedProperties.add(observedProperty.convertToFrostStandard());
+            observedProperties.add(observedProperty.convertToFrostStandard(frostUrl));
 
         }
 
         MultiDatastream mds = new MultiDatastream(this.getName(), this.getDescription(), this.getObservation_types(), units);
-        mds.setSensor(this.sensor.convertToFrostStandard());
+        mds.setSensor(this.sensor.convertToFrostStandard(frostUrl));
 
-        de.fraunhofer.iosb.ilt.sta.model.Thing frostThing = this.thing.convertToFrostStandard();
+        de.fraunhofer.iosb.ilt.sta.model.Thing frostThing = this.thing.convertToFrostStandard(frostUrl);
         mds.setThing(frostThing);
         mds.setObservedProperties(observedProperties);
 

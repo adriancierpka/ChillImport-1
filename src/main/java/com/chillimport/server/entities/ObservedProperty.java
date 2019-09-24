@@ -5,6 +5,7 @@ import de.fraunhofer.iosb.ilt.sta.service.SensorThingsService;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 
 /**
@@ -61,12 +62,12 @@ public class ObservedProperty extends Entity {
      *
      * @throws URISyntaxException if definition string has wrong syntax
      */
-    public de.fraunhofer.iosb.ilt.sta.model.ObservedProperty convertToFrostStandard() throws URISyntaxException {
+    public de.fraunhofer.iosb.ilt.sta.model.ObservedProperty convertToFrostStandard(URL frostUrl) throws URISyntaxException {
 
         if (!(getFrostId() == null || getFrostId().isEmpty())) {
             SensorThingsService service;
             try {
-                service = new SensorThingsService(FileManager.getServerURL());
+                service = new SensorThingsService(frostUrl);
                 return service.observedProperties().find(Long.parseLong(getFrostId()));
             } catch (Exception e) {
             }

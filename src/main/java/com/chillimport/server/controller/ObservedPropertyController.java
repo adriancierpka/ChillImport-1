@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.util.LinkedList;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -29,18 +30,23 @@ public class ObservedPropertyController extends EntityController<ObservedPropert
 
     @Override
     @RequestMapping(value = "/observedProperty/create", method = RequestMethod.POST)
-    public ResponseEntity<?> create(@RequestBody ObservedProperty obsProp) {
+    public ResponseEntity<?> create(@RequestBody EntityStringWrapper<ObservedProperty> OPwrapper) {
         de.fraunhofer.iosb.ilt.sta.model.ObservedProperty frostObsProp;
-
+        ObservedProperty obsProp = OPwrapper.getEntity();
         try {
-            frostObsProp = obsProp.convertToFrostStandard();
+        	frostObsProp = obsProp.convertToFrostStandard(new URL(OPwrapper.getString()));
         } catch (URISyntaxException e) {
             LogManager.getInstance().writeToLog("Definition of the ObservedProperty is no valid URI.", true);
             ErrorHandler.getInstance().addRows(-1, e);
             return new ResponseEntity<>("Definition of the ObservedProperty is no valid URI.", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        } catch (MalformedURLException e) {
+        	LogManager.getInstance().writeToLog("Malformed URL for Frost-Server.", true);
+            ErrorHandler.getInstance().addRows(-1, e);
+            return new ResponseEntity<>("Malformed URL for Frost-Server.", HttpStatus.NOT_FOUND);
+		}
+        
         try {
-            SensorThingsService service = sensorThingsServiceFactory.build();
+            SensorThingsService service = sensorThingsServiceFactory.build(new URL(OPwrapper.getString()));
             service.create(frostObsProp);
         } catch (MalformedURLException e) {
             LogManager.getInstance().writeToLog("Malformed URL for Frost-Server.", true);
@@ -61,10 +67,10 @@ public class ObservedPropertyController extends EntityController<ObservedPropert
     @Override
     @RequestMapping(value = "/observedProperty/single", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> get(int id) {
+    public ResponseEntity<?> get(int id, @RequestParam String frostUrlString) {
         ObservedProperty observedProperty;
         try {
-            SensorThingsService service = sensorThingsServiceFactory.build();
+            SensorThingsService service = sensorThingsServiceFactory.build(new URL(frostUrlString));
             observedProperty = new ObservedProperty(service.observedProperties().find(id));
         } catch (MalformedURLException e) {
             LogManager.getInstance().writeToLog("Malformed URL for Frost-Server.", true);
@@ -83,11 +89,11 @@ public class ObservedPropertyController extends EntityController<ObservedPropert
 
     @Override
     @RequestMapping(value = "/observedProperty/all", method = RequestMethod.GET)
-    public ResponseEntity<?> getAll() {
+    public ResponseEntity<?> getAll(@RequestParam String frostUrlString) {
         EntityList<de.fraunhofer.iosb.ilt.sta.model.ObservedProperty> frostObsProps;
-        List<ObservedProperty> observedProperties = new LinkedList<>();
+        List<ObservedProperty> observedProperties = new ArrayList<>();
         try {
-            SensorThingsService service = sensorThingsServiceFactory.build();
+            SensorThingsService service = sensorThingsServiceFactory.build(new URL(frostUrlString));
             frostObsProps = service.observedProperties().query().list();
         } catch (MalformedURLException e) {
             LogManager.getInstance().writeToLog("Malformed URL for Frost-Server.", true);

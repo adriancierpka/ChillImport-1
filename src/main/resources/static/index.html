@@ -12,7 +12,7 @@
     <script type="text/javascript" src="/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 </head>
-<body onload="serverdown(main)" style="overflow-x: hidden">
+<body onload="main()" style="overflow-x: hidden">
 <div class="container-fluid">
     <div class="row" style="height: 70px; width: 100%">
         <img src="images/logo.png" style="height: 100%; padding-left: 20px">
@@ -37,14 +37,7 @@
     </div>
 </div>
 
-<!-- leftlog
-<div id="leftlogbox" class="leftlogbox" style="visibility: hidden">
-    <p style="color: white">Log:</p>
-    <textarea id="log" readonly style="width: 100%;height: 400px; resize: none;">
-    </textarea>
-</div>
 
--->
 <!--Start-->
 <div align="center">
     <div class="row" style="height: 30px"></div>
@@ -156,10 +149,28 @@
                     </div>
                 </div>
                 <div class="row" style="margin-left: 8px; margin-top: 8px">
+                
+					<div>
+     	  	       		<label>1: Choose Frost-Server:</label>
+         	           	<div class="righttooltip"><span class="glyphicon glyphicon-question-sign"></span>
+  	                   		<div class="tooltiptext">Specify the url of the FROSTServer.</div>
+       	                </div>
+           	            <br>
+             	        <input size="60" type="text" id="frostserverurl" value=""  onblur="openurldialog()">
+                 	</div>
+                 	
+                 	<button id="okurl" class="btn btn-default"
+                                        style="height: 30px;width: 60px;" >OK
+                 	</button>   
+                 	
+                 	<div class="topspace" style="height: 20px"></div>
+					
+					             
+                
                     <div class="column" style="width: 50%">
                         <!-- Delimiter-->
                         <div>
-                            <label>1: Delimiter:</label>
+                            <label>2: Delimiter:</label>
                             <div class="righttooltip"><span class="glyphicon glyphicon-question-sign"></span>
                                 <div class="tooltiptext">Specify the character(s) seperating the columns in your file. Can be any alphanumeric character or valid regular expression. If field is empty or invalid, '\n' is used as delimiter.</div>
                             </div>
@@ -171,7 +182,7 @@
 
                         <!--headerlines-->
                         <div class="topspace">
-                            <label>2: Number of header lines:</label>
+                            <label>3: Number of header lines:</label>
                             <div class="righttooltip"><span class="glyphicon glyphicon-question-sign"></span>
                                 <div class="tooltiptext">Number of lines at the beginning of your file to be ignored. Can be any non-negative number up to 9999. If field is empty or contains invalid string, software uses 0.</div>
                             </div>
@@ -183,7 +194,7 @@
 
                         <!-- current mapping-->
                         <div class="topspace">
-                            <label>3: Current mapping:</label>
+                            <label>4: Current mapping:</label>
                             <div class="righttooltip"><span class="glyphicon glyphicon-question-sign"></span>
                                 <div class="tooltiptext">Here you can save if a value should be replaced with an other
                                     value
@@ -199,7 +210,7 @@
 
                         <!-- DateTime -->
                         <div class="row" style="padding: 10px">
-                            <label>4: DateTime:</label><br>
+                            <label>5: DateTime:</label><br>
                             <label>Timezone:</label>
 
                             <br>
@@ -335,7 +346,7 @@
                                                             in
                                                             this column as regular expression. (y - Year, M - Month, d -
                                                             Day, H - Hour, m - Minute, s - Second,
-                                                            [, VV - Timezone mandatory])
+                                                            [, VV - Timezone mandatory]) <br> For example: <br> dd.MM.yyyy HH:mm:ss
                                                         </div>
                                                     </div>
                                                 </div>
@@ -371,7 +382,7 @@
                 <!--start of config part 2 -->
                 <div id="thingbox" style="display: none">
                     <!--Thing-->
-                    <label>5: Thing:</label><br>
+                    <label>6: Thing:</label><br>
                     <select class="select2" id="things" style="width: 200px">
                     </select>
                     <button class="btn btn-default" value="thing.html" onclick="showThingModal()">
@@ -387,7 +398,7 @@
                     <div class="row" style="padding: 10px">
                         <div class="col-lg-12" style="height: 200px;">
 
-                            <label>6: Datastreams:</label><br>
+                            <label>7: Datastreams:</label><br>
                             <datalist id="thingstreams">
                             </datalist>
                             <div id="datastreams" class="topspace"
@@ -499,7 +510,7 @@
     </textarea>
     </div>
     <div class="column" style="width: 20%">
-
+		<button id="scrollDown" class="btn btn-default" onclick="toggleScroll()" style="margin: 20px">Scroll to bottom</button>
     </div>
 </div>
 

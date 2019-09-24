@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.util.LinkedList;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -28,13 +29,16 @@ public class DatastreamController {
 
     @Autowired
     private SensorThingsServiceFactory sensorThingsServiceFactory;
-
+    
+    
     @RequestMapping(value = "/datastream/create", method = RequestMethod.POST)
-    public ResponseEntity<?> create(@RequestBody Datastream ds) {
+    public ResponseEntity<?> create(@RequestBody EntityStringWrapper<Datastream> dsWrapper) {
+    	Datastream ds = dsWrapper.getEntity();
         if (ds.isMulti()) {
+        	
             MultiDatastream frostmds;
             try {
-                frostmds = ds.convertToFrostMultiDatastream();
+                frostmds = ds.convertToFrostMultiDatastream(new URL(dsWrapper.getString()));
             } catch (IOException e) {
                 LogManager.getInstance().writeToLog("Could not convert the Coordinates of the Location to a GeoJSON-Object.", true);
                 ErrorHandler.getInstance().addRows(-1, e);
@@ -46,7 +50,7 @@ public class DatastreamController {
                 return new ResponseEntity<>("Definition of an ObservedProperty of the MultiDatastream is no valid URI.", HttpStatus.CONFLICT);
             }
             try {
-                SensorThingsService service = sensorThingsServiceFactory.build();
+                SensorThingsService service = sensorThingsServiceFactory.build(new URL(dsWrapper.getString()));
                 service.create(frostmds);
                 ds = new Datastream(frostmds);
             } catch (ServiceFailureException e) {
@@ -66,7 +70,7 @@ public class DatastreamController {
         else {
             de.fraunhofer.iosb.ilt.sta.model.Datastream frostds;
             try {
-                frostds = ds.convertToFrostDatastream();
+                frostds = ds.convertToFrostDatastream(new URL(dsWrapper.getString()));
             } catch (IOException e) {
                 LogManager.getInstance().writeToLog("Could not convert the Coordinates of the Location to a GeoJSON-Object.", true);
                 ErrorHandler.getInstance().addRows(-1, e);
@@ -78,7 +82,7 @@ public class DatastreamController {
                 return new ResponseEntity<>("Definition of the ObservedProperty of the Datastream is no valid URI.", HttpStatus.CONFLICT);
             }
             try {
-                SensorThingsService service = sensorThingsServiceFactory.build();
+                SensorThingsService service = sensorThingsServiceFactory.build(new URL(dsWrapper.getString()));
                 service.create(frostds);
                 ds = new Datastream(frostds);
             } catch (ServiceFailureException e) {
@@ -100,15 +104,16 @@ public class DatastreamController {
 
     }
 
-
+    
     @RequestMapping(value = "/datastream/single", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> get(@RequestParam int id, @RequestParam boolean isMulti) {
+    public ResponseEntity<?> get(@RequestParam int id, @RequestParam boolean isMulti, @RequestParam String url) throws MalformedURLException {
+    	URL frostUrl = new URL(url);
         Datastream ds;
         if (isMulti) {
             MultiDatastream frostMDs;
             try {
-                SensorThingsService service = sensorThingsServiceFactory.build();
+                SensorThingsService service = sensorThingsServiceFactory.build(frostUrl);
                 frostMDs = service.multiDatastreams().find(id);
             } catch (ServiceFailureException e) {
                 LogManager.getInstance().writeToLog("Could not retrieve MultiDatastream.", true);
@@ -143,7 +148,7 @@ public class DatastreamController {
         else {
             de.fraunhofer.iosb.ilt.sta.model.Datastream frostDs;
             try {
-                SensorThingsService service = sensorThingsServiceFactory.build();
+                SensorThingsService service = sensorThingsServiceFactory.build(frostUrl);
                 frostDs = service.datastreams().find(id);
             } catch (ServiceFailureException e) {
                 LogManager.getInstance().writeToLog("Could not retrieve Datastream.", true);
@@ -177,13 +182,14 @@ public class DatastreamController {
         return new ResponseEntity<>(ds, HttpStatus.OK);
     }
 
-
+    
     @RequestMapping(value = "/datastream/all", method = RequestMethod.GET)
-    public ResponseEntity<?> getAll(@RequestParam int thingId) {
+    public ResponseEntity<?> getAll(@RequestParam int thingId, @RequestParam String url) throws MalformedURLException {
+    	URL frostUrl = new URL(url);
         EntityList<de.fraunhofer.iosb.ilt.sta.model.Datastream> frostDsList;
         EntityList<MultiDatastream> frostMdsList;
         try {
-            SensorThingsService service = sensorThingsServiceFactory.build();
+            SensorThingsService service = sensorThingsServiceFactory.build(frostUrl);
             frostDsList = service.things().find(thingId).datastreams().query().list();
             frostMdsList = service.things().find(thingId).multiDatastreams().query().list();
         } catch (ServiceFailureException e) {
@@ -199,7 +205,7 @@ public class DatastreamController {
             ErrorHandler.getInstance().addRows(-1, e);
             return new ResponseEntity<>("Wrong URI for Frost-Server.", HttpStatus.NOT_FOUND);
         }
-        List<Datastream> datastreams = new LinkedList<>();
+        List<Datastream> datastreams = new ArrayList<>();
         for (de.fraunhofer.iosb.ilt.sta.model.Datastream frostDs : frostDsList) {
             try {
                 datastreams.add(new Datastream(frostDs));
