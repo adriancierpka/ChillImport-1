@@ -10,7 +10,9 @@ import de.fraunhofer.iosb.ilt.sta.service.SensorThingsService;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+
 import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,7 +99,7 @@ public class Datastream extends Entity {
         }
 
         this.observedProperties = new ArrayList<>();
-        
+
         for (de.fraunhofer.iosb.ilt.sta.model.ObservedProperty op : mds.getObservedProperties()) {
             this.observedProperties.add(new ObservedProperty(op));
         }
