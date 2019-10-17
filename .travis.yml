@@ -24,7 +24,7 @@ jobs:
           - mvn dockerfile:build
 
         - stage: deployDocker
-          if: $TRAVIS_PULL_REQUEST == “false”
+          if: '[$TRAVIS_PULL_REQUEST == “false”]'
           name: Push docker image
           script:
           - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
