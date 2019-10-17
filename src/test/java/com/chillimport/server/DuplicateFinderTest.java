@@ -76,7 +76,7 @@ public class DuplicateFinderTest {
 
 
         when(queryMock.filter("result eq "+ "other" + " and phenomenonTime eq " + time.toInstant().toString())).thenReturn(wrongFilterMock);
-        when(wrongFilterMock.list()).thenThrow(new ServiceFailureException());
+        when(wrongFilterMock.list()).thenThrow(new ServiceFailureException("Error"));
         assertFalse(DuplicateFinder.find(sensorThingsServiceMock,time,"other",types));
 
     }
@@ -132,7 +132,7 @@ public class DuplicateFinderTest {
 
 
         when(queryMock.filter("result eq "+ "other" + " and phenomenonTime eq " + time.toInstant().toString())).thenReturn(wrongFilterMock);
-        when(wrongFilterMock.list()).thenThrow(new ServiceFailureException());
+        when(wrongFilterMock.list()).thenThrow(new ServiceFailureException("Error"));
         assertFalse(DuplicateFinder.find(dsMock,time,"other",types));
 
     }
@@ -199,7 +199,7 @@ public class DuplicateFinderTest {
         when(obsDaoMock.query()).thenReturn(queryMock);
 
         when(queryMock.filter("phenomenonTime eq " + time.toInstant().toString() + " and result[0] eq "+ result[0] + " and " + "result[1] eq " + result[1])).thenReturn(wrongFilterMock);
-        when(wrongFilterMock.list()).thenThrow(new ServiceFailureException());
+        when(wrongFilterMock.list()).thenThrow(new ServiceFailureException("Error"));
         assertFalse(DuplicateFinder.find(mdsMock,time,result,types));
     }
 
