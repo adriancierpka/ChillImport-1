@@ -1,44 +1,14 @@
 version: '3.4'
 services:
   chill-import:
-    image: fraunhoferiosb/chillimport:chillimport-latest
+    image: fraunhoferiosb/chillimport:latest
+
     ports:
             - "8000:8000"
     environment:
-        - basepath="/data"
-        - serverurl=http://frost-server:8080/FROST-Server/v1.0/
+        - configPath="/data"
     volumes:
       - chill-import-volume:/data
-    depends_on:
-      - frost-server 
-
-  frost-server:
-    image: fraunhoferiosb/frost-server:latest
-    environment:
-      - serviceRootUrl=http://localhost:8080/FROST-Server
-      - http_cors_enable=true
-      - http_cors_allowed.origins=*
-      - persistence_db_driver=org.postgresql.Driver
-      - persistence_db_url=jdbc:postgresql://database:5432/sensorthings
-      - persistence_db_username=sensorthings
-      - persistence_db_password=ChangeMe
-      - persistence_autoUpdateDatabase=true
-    ports:
-      - 8080:8080
-      - 1883:1883
-    depends_on:
-      - database
-    expose:
-      - 8080
-
-  database:
-    image: mdillon/postgis:latest
-    environment:
-      - POSTGRES_DB=sensorthings
-      - POSTGRES_USER=sensorthings
-      - POSTGRES_PASSWORD=ChangeMe
-    volumes:
-      - postgis_volume:/var/lib/postgresql/data
+      
 volumes:
-    postgis_volume:
     chill-import-volume:
