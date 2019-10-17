@@ -20,9 +20,14 @@ jobs:
         - stage: build
           name: Build ChillImport
           script: 
-          - mvn install -DskipTests
-          - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+          - mvn install
           - mvn dockerfile:build
+
+        - stage: deployDocker
+          if: $TRAVIS_PULL_REQUEST == “false”
+          name: Push docker image
+          script:
+          - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
           - mvn dockerfile:tag@tag-version
           - mvn dockerfile:tag@tag-hash
           - mvn dockerfile:tag@tag-latest
@@ -39,7 +44,6 @@ services:
     
 env:
     global:
-    - serverurl ="http://localhost:8080/FROST-Server/v1.0"
     # travis encrypt DOCKER_USERNAME=[username]
     - secure: GncB7ouKlnN9UWrmZZrTPEJn+NBFCKBK3rhHne50PHBtFKShjk+j/8qqm40ZqJAFZsCRPXxNJrbFvVe5I8Ozcre/PxnHlkR/5+Crp4vP3dCR9S5q8TfFtl3s+X2/OzSATEV0/J0dI5fQkL5/v8+GiXN9QnMEUwzsggumf3mC1loXBIvjhWXUZh1h2UJC3Jk05qCq2+mru08mQt7ygPnaQxihArCJKDMOSVklOf9EDWJcU3+agL1C+XRvcaRpsyaatnEmTQWrCWkW38ZCrIPH9ShsdEX6NFEyaJcGbcConkHvmpoWgQ5pnnieoOAx79wBqQnVOaPaLpDU5mI5el6pLuvINXxd0UDY4d/d6eU9YTQE1/7NdgTPp4W2TC+pUlCIYhzoK4R7d2NDi/KtWaNbBJ5+LMELTDy7oWEPEAi0Li/9VnqYms9hlOzKyL7WXUVeXK9vSS71ss0pylBtnzDUzvrn/aJMtKDMgalLNyCuSrlqFWPvL/zaUtxBEusxAW6yGx+RnxN5rrFWcHmQK6fbCpZ5Y6KiLeh508ZOQbld8uglvs2mKwX6tWZjLBvRJze8EjA9ZUSAU++SG3Nb+RbNONRvGxhE6umq0+fZ7fmxHxeDMy/xB1dlanD31JWJeiLzCd+gUD/LDYytfFviGkk79cEZdyLhwsPLc8Pg+3nJg7c=
 
