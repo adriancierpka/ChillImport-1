@@ -24,17 +24,14 @@ jobs:
           script: 
           - mvn install
           - mvn dockerfile:build
-
-        - stage: deployDocker
-          name: Push docker image
-          script:
-          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"; fi'
-          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; mvn dockerfile:tag@tag-version; fi'
-          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; mvn dockerfile:tag@tag-hash; fi'
-          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; mvn dockerfile:tag@tag-latest; fi'
-          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; mvn dockerfile:push@push-version; fi'
-          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; mvn dockerfile:push@push-hash; fi'
-          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; mvn dockerfile:push@push-latest; fi'
+          after_success:
+          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"; fi'
+          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mvn dockerfile:tag@tag-version; fi'
+          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mvn dockerfile:tag@tag-hash; fi'
+          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mvn dockerfile:tag@tag-latest; fi'
+          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mvn dockerfile:push@push-version; fi'
+          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mvn dockerfile:push@push-hash; fi'
+          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mvn dockerfile:push@push-latest; fi'
           
 cache:
   directories:
