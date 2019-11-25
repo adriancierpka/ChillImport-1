@@ -1,4 +1,5 @@
 FROM java:8
+ARG JAR_FILE
 
 LABEL maintainer = "vercility@gmail.com"
 VOLUME /tmp
