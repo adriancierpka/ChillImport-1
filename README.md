@@ -1,4 +1,5 @@
-# ChillImport [![Build Status](https://travis-ci.org/FraunhoferIOSB/ChillImport.svg?branch=master)](https://travis-ci.org/FraunhoferIOSB/ChillImport)
+# ChillImport [![Build Status](https://travis-ci.org/FraunhoferIOSB/ChillImport.svg?branch=master)](https://travis-ci.org/FraunhoferIOSB/ChillImport) [![codecov](https://codecov.io/gh/FraunhoferIOSB/ChillImport/branch/master/graph/badge.svg)](https://codecov.io/gh/FraunhoferIOSB/ChillImport)
+
 Starting the Server :
 
 Either run the available Docker-Image or the maven-generated WAR-File.
