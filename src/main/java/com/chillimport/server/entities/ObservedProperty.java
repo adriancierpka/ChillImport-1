@@ -1,6 +1,5 @@
 package com.chillimport.server.entities;
 
-import com.chillimport.server.FileManager;
 import de.fraunhofer.iosb.ilt.sta.service.SensorThingsService;
 
 import java.net.URI;
@@ -78,11 +77,7 @@ public class ObservedProperty extends Entity {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof ObservedProperty) {
-            if (super.equals(obj)) {
-                return this.definition.equals(((ObservedProperty) obj).getDefinition());
-            }
-        }
-        return false;
+        return (obj instanceof ObservedProperty && 
+        	super.equals(obj) && this.definition.equals(((ObservedProperty) obj).getDefinition()));
     }
 }

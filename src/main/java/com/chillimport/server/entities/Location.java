@@ -1,6 +1,5 @@
 package com.chillimport.server.entities;
 
-import com.chillimport.server.FileManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iosb.ilt.sta.service.SensorThingsService;
 import org.geojson.GeoJsonObject;
@@ -117,16 +116,10 @@ public class Location extends Entity {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Location) {
-            if (super.equals(obj)) {
-                if (this.encoding_TYPE.equals(((Location) obj).getEncoding_TYPE())) {
-                    if (this.location.equals(((Location) obj).getLocation())) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        return (obj instanceof Location && 
+        	super.equals(obj) && 
+        	this.encoding_TYPE.equals(((Location) obj).getEncoding_TYPE()) && 
+        	this.location.equals(((Location) obj).getLocation()));
     }
 }
 
