@@ -1,7 +1,10 @@
 package com.chillimport.server;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+
+@SpringBootApplication
 public class ServerApplication {
 
   private static final String DEFAULT_CONFIG_PATH = "/data";
@@ -23,6 +26,6 @@ public class ServerApplication {
       FileManager.setUsernameOnStartup(username);
       System.out.println("Found user name");
     }
-    SpringApplication.run(ChillImport.class, args);
+    SpringApplication.run(ServerApplication.class, args);
   }
 }
