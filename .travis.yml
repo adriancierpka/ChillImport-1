@@ -15,7 +15,8 @@ install:
   - source ./setBranchVariable.sh
   
 stages:
-    - build    
+    - build
+    - test
 
 jobs:
     include:
@@ -33,6 +34,13 @@ jobs:
           - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mvn dockerfile:push@push-version; fi'
           - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mvn dockerfile:push@push-hash; fi'
           - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mvn dockerfile:push@push-latest; fi'
+        - stage: test
+          name: Phonito scan
+          script: 
+          - wget https://phonito-public-artifacts.azureedge.net/scanner/phonito-scanner -O /usr/local/bin/phonito-scanner
+          - chmod +x /usr/local/bin/phonito-scanner
+          - docker pull fraunhoferiosb/chillimport:$TAG
+          - phonito-scanner -i fraunhoferiosb/chillimport:$TAG
 
 cache:
   directories:
@@ -48,3 +56,6 @@ env:
 
     # travis encrypt DOCKER_PASSWORD=[password]
     - secure: peOdv4tTZc2+8EePaaHl5/RVGEsHRZThNckX7EpicGVWHnbvL8qldcwuttboSeGMT4kkwW27q28y9D3IU9NZEH6zd0P3rbwZhui/O4whmDRKgkfU3TqOTZfGge+6SGtVJLvJufR2DqI0jpko6ZQ/HU0PjlVPoIfO44ty1qaqIcgf2FU1ngVEiyvCVMUAlRrJDc3b6Dl0PkmNDZy42eV4sTKW0mTeBT2Ubb/kxrjcYHWIsbniuO5kGxXF+6OWRPkwhFAAMhm5gSdABRL/VwV0qK9o9ho3yBIgyQt6rdWxgIM0UB49lcChHn5L6OHXz0W4/d3UlTZdg1t5q6OJSNJ+cy9TF6Qwfcgi1t82m5lJu67gdl8QP4wthxr+nkfyTwRAyJSGLKw8lmSwsJrZlmhYazqhwBVrUY8XbwVtJl8HC764fU/uirTltgdZSxs0y1PID7WBF+Q+U/y/6O9pI8FZKyDlhqLd1OgxPC5dR44jCPy7Uj1sq+8onRSr9lvbm0uO3hYyIlpzdOj+QPdmKdERU/fsVFubV5fof6YGHA5SI9g4dynwzrb/wxw1a813wwUYyVtznncJQckhDqnKDp81VBsgKfgFdd31WgdlcR1HsS/YPdwgPkVb5S3eDW+1HVcjBVxHT3t9OvUlbU2XWP+a28ABwAdvHPAm01f6HQqL5cg=
+    
+    # travis encrypt PHONITO_API_TOKEN=[api_token]
+    - secure: Jhz7XGqvBVhwqDRhB+qP52kOoy6rxj+medsBdfjThlhIa2WXhFJOxwRUk3raGGfTUrYDHxs6BJbvhQUr+iH8FYP+I6J60t8FfX1xO+SFskoL7WkrC/ulibcwcVMnLICKduyNXOgpOCt4p4FLojffFYukUL7qo0R7WMblsSALxPFPwIyPXgUT3EYTmWN3PbehdFTCQ3H5hkIknai5MZy0LoQ6MPpajzn3HmUK6Zebu82UtVgi61nfUjX+YD0rp7LRKS3ellws9bnK8sbAx9iP34mWYoHxyMkqalGdvZWBtJeBFFSBBYFMGzlRhHAXKYhIXZ18YkqUFAUDBg9wujQxCahmNpV+afFloiR4I/w0O5s+i94tcXSVLw1vJ3H5Q8yKV2a/aiAU+aBsldvvTx9l9mbxVXDTvbcMRnWnEZNuN9YExQIbKtthzn13gVP7bfiVkFJ2CwBGwJY7E3QK8WY8LNIvv+lCA9FFZ74zF0/qGCSmwIcrCSrg+MQfztmiznzUlHEhKjzCPdfel1koe3BCidwO7tPUnC9XsayaCiz82shyqrwq1Euw1LL2Gd8IN6w/HfGymgp2xcJBw52azBegZIWQwTkciHmwgh+2drTv6F+GT8S92lMsBEiyphDZjEm8v1PRaN2jCgrnEiOfTFWc5u9BfOzrFNdUijIVbJyBijg=
