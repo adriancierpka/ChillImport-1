@@ -1,0 +1,14 @@
+name: Check the latest docker image
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Scan with Phonito Security
+        uses: phonito/phonito-scanner-action@master
+        with:
+          image: fraunhoferiosb/chillimport
+          phonito-token: '${{ secrets.PHONITO_TOKEN }}'
+          
