@@ -6,6 +6,9 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
+      - name: Pull Docker iamge
+        run: docker pull fraunhoferiosb/chillimport:latest
+        
       - name: Scan with Phonito Security
         uses: phonito/phonito-scanner-action@master
         with:
