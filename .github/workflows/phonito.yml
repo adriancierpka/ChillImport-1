@@ -9,6 +9,6 @@ jobs:
       - name: Scan with Phonito Security
         uses: phonito/phonito-scanner-action@master
         with:
-          image: fraunhoferiosb/chillimport
+          image: fraunhoferiosb/chillimport:latest
           phonito-token: '${{ secrets.PHONITO_TOKEN }}'
           
