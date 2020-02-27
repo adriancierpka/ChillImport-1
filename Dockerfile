@@ -1,4 +1,4 @@
-FROM java:8
+FROM openjdk:8-jre
 ARG JAR_FILE
 
 LABEL maintainer = "vercility@gmail.com"
