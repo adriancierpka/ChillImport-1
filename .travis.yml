@@ -28,19 +28,23 @@ jobs:
           after_success:
           - bash <(curl -s https://codecov.io/bash)
           - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"; fi'
-          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mvn dockerfile:tag@tag-version; fi'
           - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mvn dockerfile:tag@tag-hash; fi'
-          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mvn dockerfile:tag@tag-latest; fi'
-          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mvn dockerfile:push@push-version; fi'
           - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mvn dockerfile:push@push-hash; fi'
-          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mvn dockerfile:push@push-latest; fi'
+          
+          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" -a "$TRAVIS_BRANCH" = "master"  ]; then mvn dockerfile:tag@tag-version; fi'
+          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" -a "$TRAVIS_BRANCH" = "master"  ]; then mvn dockerfile:push@push-version; fi'
+          
+          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" -a "$TRAVIS_BRANCH" = "master"  ]; then mvn dockerfile:tag@tag-latest; fi'        
+          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" -a "$TRAVIS_BRANCH" = "master"  ]; then mvn dockerfile:push@push-latest; fi'
         - stage: test
           name: Phonito scan
           script: 
           - sudo wget https://phonito-public-artifacts.azureedge.net/scanner/phonito-scanner -O /usr/local/bin/phonito-scanner
           - sudo chmod +x /usr/local/bin/phonito-scanner
           - docker pull fraunhoferiosb/chillimport:$TAG
-          - phonito-scanner -i fraunhoferiosb/chillimport:$TAG
+          - docker pull fraunhoferiosb/chillimport:latest
+          - phonito-scanner -i fraunhoferiosb/chillimport:$TAG --fail-level CRITICAL
+          - phonito-scanner -i fraunhoferiosb/chillimport:latest --fail-level CRITICAL
 
 cache:
   directories:
