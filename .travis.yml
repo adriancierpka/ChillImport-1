@@ -37,8 +37,8 @@ jobs:
         - stage: test
           name: Phonito scan
           script: 
-          - wget https://phonito-public-artifacts.azureedge.net/scanner/phonito-scanner -O /usr/local/bin/phonito-scanner
-          - chmod +x /usr/local/bin/phonito-scanner
+          - sudo wget https://phonito-public-artifacts.azureedge.net/scanner/phonito-scanner -O /usr/local/bin/phonito-scanner
+          - sudo chmod +x /usr/local/bin/phonito-scanner
           - docker pull fraunhoferiosb/chillimport:$TAG
           - phonito-scanner -i fraunhoferiosb/chillimport:$TAG
 
