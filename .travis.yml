@@ -16,7 +16,8 @@ install:
   
 stages:
     - build
-    - test
+    - docker-image-test
+      if: branch = master
 
 jobs:
     include:
@@ -36,15 +37,15 @@ jobs:
           
           - 'if [ "$TRAVIS_PULL_REQUEST" = "false" -a "$TRAVIS_BRANCH" = "master"  ]; then mvn dockerfile:tag@tag-latest; fi'        
           - 'if [ "$TRAVIS_PULL_REQUEST" = "false" -a "$TRAVIS_BRANCH" = "master"  ]; then mvn dockerfile:push@push-latest; fi'
-        - stage: test
+        - stage: docker-image-test
           name: Phonito scan
           script: 
-          - sudo wget https://phonito-public-artifacts.azureedge.net/scanner/phonito-scanner -O /usr/local/bin/phonito-scanner
-          - sudo chmod +x /usr/local/bin/phonito-scanner
-          - docker pull fraunhoferiosb/chillimport:$TAG
-          - docker pull fraunhoferiosb/chillimport:latest
-          - phonito-scanner -i fraunhoferiosb/chillimport:$TAG --fail-level CRITICAL
-          - phonito-scanner -i fraunhoferiosb/chillimport:latest --fail-level CRITICAL
+          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then sudo wget https://phonito-public-artifacts.azureedge.net/scanner/phonito-scanner -O /usr/local/bin/phonito-scanner; fi'
+          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then sudo chmod +x /usr/local/bin/phonito-scanner; fi'
+          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then docker pull fraunhoferiosb/chillimport:$TAG; fi'
+          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then docker pull fraunhoferiosb/chillimport:latest; fi'
+          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then phonito-scanner -i fraunhoferiosb/chillimport:$TAG --fail-level CRITICAL; fi'
+          - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then phonito-scanner -i fraunhoferiosb/chillimport:latest --fail-level CRITICAL; fi'
 
 cache:
   directories:
