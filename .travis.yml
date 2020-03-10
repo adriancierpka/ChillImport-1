@@ -11,7 +11,6 @@ before_install:
   - chmod +x mvnw
   
 install:
-  - chmod +x ./setBranchVariable.sh
   - source ./setBranchVariable.sh
   
 stages:
@@ -24,6 +23,7 @@ jobs:
           script: 
           - mvn install
           - mvn dockerfile:build
+          - source ./docker_test.sh
           after_success:
           - bash <(curl -s https://codecov.io/bash)
           - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"; fi'
