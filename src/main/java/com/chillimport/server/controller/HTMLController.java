@@ -9,7 +9,15 @@ import com.chillimport.server.errors.LogManager;
 import com.chillimport.server.utility.SensorThingsServiceFactory;
 import de.fraunhofer.iosb.ilt.sta.ServiceFailureException;
 import de.fraunhofer.iosb.ilt.sta.service.SensorThingsService;
-
+import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -24,19 +32,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.File;
-import java.io.IOException;
-
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.UnknownHostException;
-
-import java.util.ArrayList;
-
-import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class HTMLController {
@@ -81,28 +76,6 @@ public class HTMLController {
     return ErrorHandler.getInstance().returnFiles();
   }
 
-  /*
-  @RequestMapping(value = "/server-check", method = RequestMethod.GET)
-  @ResponseBody
-  public boolean pingFROSTServer() {
-      try {
-          return
-  InetAddress.getByName(FileManager.getServerURL().getHost()).isReachable(6000);
-      } catch (UnknownHostException e) {
-          LogManager.getInstance().writeToLog("Server not reachable", true);
-          ErrorHandler.getInstance().addRows(-1,e);
-          return false;
-      } catch (MalformedURLException e) {
-          LogManager.getInstance().writeToLog("Server address malformed", true);
-          ErrorHandler.getInstance().addRows(-1,e);
-          return false;
-      } catch (IOException e) {
-          LogManager.getInstance().writeToLog("Internet connection offline",
-  true); ErrorHandler.getInstance().addRows(-1,e); return false;
-      }
-  }
-  */
-
   @RequestMapping(value = "/server-check", method = RequestMethod.GET)
   @ResponseBody
   public String pingFROSTServer(@RequestParam String frostUrl) {
@@ -142,9 +115,14 @@ public class HTMLController {
   }
 
   public boolean pingFROSTServer(URL frostUrl) {
+    SensorThingsServiceFactory sFactory = new SensorThingsServiceFactory();
+    SensorThingsService service;
 
     try {
-      return InetAddress.getByName(frostUrl.getHost()).isReachable(6000);
+      InetAddress.getByName(frostUrl.getHost()).isReachable(6000);
+      service = sFactory.build(frostUrl);
+      service.things().query().first();
+      return true;
     } catch (UnknownHostException e) {
       LogManager.getInstance().writeToLog("Server not reachable", true);
       ErrorHandler.getInstance().addRows(-1, e);
@@ -155,6 +133,14 @@ public class HTMLController {
       return false;
     } catch (IOException e) {
       LogManager.getInstance().writeToLog("Internet connection offline", true);
+      ErrorHandler.getInstance().addRows(-1, e);
+      return false;
+    } catch (URISyntaxException e) {
+      LogManager.getInstance().writeToLog("Wrong URI for Frost-Server", true);
+      ErrorHandler.getInstance().addRows(-1, e);
+      return false;
+    } catch (ServiceFailureException e) {
+      LogManager.getInstance().writeToLog("Server not reachable", true);
       ErrorHandler.getInstance().addRows(-1, e);
       return false;
     }
@@ -171,6 +157,7 @@ public class HTMLController {
     }
     return new ResponseEntity("Deleted File", HttpStatus.OK);
   }
+
   @GetMapping("/returnRows/{fileName:.+}")
   public ResponseEntity<?> downloadFile(@PathVariable String fileName,
                                         HttpServletRequest request) {
