@@ -1,7 +1,10 @@
 package com.chillimport.server;
 
-import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -172,7 +175,7 @@ public class Table {
      *
      * @param row the row to add, should not be be null
      */
-    public void appendRow(@NotNull ArrayList<Cell> row) {
+    public void appendRow(ArrayList<Cell> row) {
 
         if (this.isEmpty()) {
             table.add(row);
