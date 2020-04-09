@@ -17,6 +17,7 @@ function showThingModal() {
   modal("dialog", "thing.html", getLocations, "Create a Thing");
 }
 
+
 /**
  * opens the popup to create a new datastream
  */
