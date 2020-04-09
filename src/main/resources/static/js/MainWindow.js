@@ -1248,13 +1248,31 @@ function urlconfirmed(fnSuccess) {
 function toggleScroll() {
 	if (scrollToBottom) {
 		scrollToBottom = false;
-		document.getElementById("scrollDown").innerText = "Scroll to bottom";
+		document.getElementById("scrollDown").innerText = "follow log";
 	} else {
 		scrollToBottom = true;
-		document.getElementById("scrollDown").innerText = "Stop scrolling";
+		document.getElementById("scrollDown").innerText = "stop";
 		document.getElementById("log").scrollTop = document
 				.getElementById("log").scrollHeight;
 	}
+}
+var maximized = false;
+function resizeLog() {
+	var elem = document.querySelector('#logbox');
+	if (!maximized) {
+		elem.style.height = '80%';
+		elem.style.width = '1100px';
+		elem.style.marginLeft = '-550px';
+		maximized = true;	
+		document.getElementById("maxSize").innerText = "shrink log";
+	} else {
+		elem.style.width = '900px';
+		elem.style.marginLeft = '-450px';
+		elem.style.height = '120px';
+		maximized = false;
+		document.getElementById("maxSize").innerText = "maximize log";
+	}
+	
 }
 
 /**
