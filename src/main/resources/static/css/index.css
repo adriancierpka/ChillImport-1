@@ -171,7 +171,7 @@ body {
 }
 
 .fixed_header{
-    
+
     table-layout: fixed;
     border-collapse: collapse;
 }
@@ -234,9 +234,7 @@ body {
     z-index: 1;
 
     margin-top: -120px;
-    height: 120px;
 
-    width: 900px;
     margin-left: -450px;
 }
 
