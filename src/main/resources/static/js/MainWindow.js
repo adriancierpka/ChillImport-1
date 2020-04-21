@@ -1131,21 +1131,18 @@ function progress() {
 						clearInterval(temp);
 					} else {
 						var isHtml = response.match(/(<html>)/);
-						if (isHtml) {
+						if(isHtml) {
 							addToLog("ishtml");
 							var statusArr = response.match(/(\d\d\d)/);
-							if (statusArr) {
+							if(statusArr) {
 								var statusCode = statusArr[1];
 								if (statusCode !== "200") {
-									addToLog("Requesting the progress failed. This does not affect the import. \n Error is: \n"
-											+ response);
+									addToLog("Requesting the progress failed. This does not affect the import. \n Error is: \n" + response);
 								} else {
-									addToLog("Unexpected response for progress request. This does not affect the import.\n Response is: \n"
-											+ response);
+									addToLog("Unexpected response for progress request. This does not affect the import.\n Response is: \n" + response);
 								}
 							} else {
-								addToLog("Unexpected response for progress request. This does not affect the import.\n Response is: \n"
-										+ response);
+								addToLog("Unexpected response for progress request. This does not affect the import.\n Response is: \n" + response);
 							}
 						} else {
 							if (response !== "Finished") {
@@ -1275,7 +1272,6 @@ function resizeLog() {
 		maximized = false;
 		document.getElementById("maxSize").innerText = "maximize log";
 	}
-
 }
 
 /**
