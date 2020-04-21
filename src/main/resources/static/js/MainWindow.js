@@ -1071,50 +1071,65 @@ function importData() {
 }
 
 function progress() {
-  $.ajax({
-    type: "GET",
-    url: "progress",
-    success: function(response) {
-      var x = false;
-      check(response, x);
-      if (x) {
-        return;
-      }
-      if (
-        response === "Import has not started yet" ||
-        response === "File has not been converted yet"
-      ) {
-        initial = 2 * initial;
-        if (initial >= 16000) {
-          addToLog(
-            "It seems the Import will take quite a while. Stopping progress requests."
-          );
-          clearInterval(id);
-          return;
-        }
-        var temp = id;
-        id = setInterval(progress, initial);
-        clearInterval(temp);
-      }
-      if (response !== "Finished") {
-        addToLog(response);
-        var resp = response;
-        resp = resp.slice(-3);
-        resp = resp.substring(0, 2);
-        document.getElementById("progress").value = resp;
-      }
-    },
-    error: function(e) {
-      if (retry === 5) {
-        addToLog("Progress could not be queried, stopping.");
-        retry = 0;
-        clearInterval(id);
-        return;
-      }
-      retry++;
-      addToLog("Could not get progress. Retrying " + 5 - retry + " more times");
-    }
-  });
+
+	$.ajax({
+				type : "GET",
+				url : "progress",
+				success : function(response) {
+					var x = false;
+					check(response, x);
+					if (x) {
+						return;
+					}
+					if (response === "Import has not started yet"
+							|| response === "File has not been converted yet") {
+						initial = 2 * initial;
+						if (initial >= 16000) {
+							addToLog("It seems the Import will take quite a while. Stopping progress requests.");
+							clearInterval(id);
+							return;
+						}
+						var temp = id;
+						id = setInterval(progress, initial);
+						clearInterval(temp);
+					} else {
+						var isHtml = response.match(/(<html>)/);
+						if(isHtml) {
+							addToLog("ishtml");
+							var statusArr = response.match(/(\d\d\d)/);
+							if(statusArr) {
+								var statusCode = statusArr[1];
+								if (statusCode !== "200") {
+									addToLog("Requesting the progress failed. This does not affect the import. \n Error is: \n" + response);
+								} else {
+									addToLog("Unexpected response for progress request. This does not affect the import.\n Response is: \n" + response);
+								}
+							} else {
+								addToLog("Unexpected response for progress request. This does not affect the import.\n Response is: \n" + response);
+							}
+						} else {
+							if (response !== "Finished") {
+								addToLog(response);
+								var resp = response;
+								resp = resp.slice(-3);
+								resp = resp.substring(0, 2);
+								document.getElementById("progress").value = resp;
+							}
+						}
+					}
+				},
+				error : function(e) {
+					if (retry === 5) {
+						addToLog("Progress could not be queried, stopping.");
+						retry = 0;
+						clearInterval(id);
+						return;
+					}
+					retry++;
+					addToLog("Could not get progress. Retrying " + 5 - retry
+							+ " more times");
+				}
+			});
 }
 
 function check(string, done) {
