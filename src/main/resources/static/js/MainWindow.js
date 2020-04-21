@@ -43,9 +43,7 @@ function showMappingModal() {
  * opens the popup to show the failed rows
  */
 function showReturnModal() {
-  $("#indexfooter")
-    .find("button:eq(0)")
-    .hide();
+  $("#indexfooter").find("button:eq(0)").hide();
   modal("dialog", "returnRows.html", returnRows, "Skipped Rows");
 }
 
@@ -84,14 +82,14 @@ function loadConfigs() {
   $.ajax({
     type: "GET",
     url: "config/all",
-    success: function(response) {
+    success: function (response) {
       var json = JSON.stringify(response, null, 4);
       var jsonparsed = JSON.parse(json);
 
       var list = $("#configs");
       list.empty().append(new Option("", "", null, null));
 
-      jsonparsed.forEach(function(val) {
+      jsonparsed.forEach(function (val) {
         var option = new Option(val.name, val.name, null, null);
         option.setAttribute("data-value", JSON.stringify(val, null, 4));
         list.append(option);
@@ -100,9 +98,9 @@ function loadConfigs() {
       list.trigger("change");
       addToLog("Loaded configurations");
     },
-    error: function(e) {
+    error: function (e) {
       addToLog(e.responseText);
-    }
+    },
   });
 }
 
@@ -131,18 +129,15 @@ function saveConfig() {
   var date = [];
   $("#timeTable")
     .find("tbody tr")
-    .each(function() {
+    .each(function () {
       var obj = {},
         $td = $(this).find("td");
-      currentInput = $td
-        .eq(1)
-        .find("input")
-        .val();
+      currentInput = $td.eq(1).find("input").val();
       if ((currentInput == null || currentInput == "") && isExcel == false) {
         $.notify(
           {
             message:
-              "Please specify the date format (no empty strings allowed)."
+              "Please specify the date format (no empty strings allowed).",
           },
           {
             allow_dismiss: true,
@@ -150,23 +145,20 @@ function saveConfig() {
             placement: { from: "top", align: "left" },
             animate: {
               enter: "animated fadeInDown",
-              exit: "animated fadeOutUp"
-            }
+              exit: "animated fadeOutUp",
+            },
           }
         );
         stop = true;
         return false;
       }
       obj["string"] = currentInput;
-      currentInput = $td
-        .eq(0)
-        .find("input")
-        .val();
+      currentInput = $td.eq(0).find("input").val();
       if (currentInput == null || currentInput == "") {
         $.notify(
           {
             message:
-              "Please specify the column where the date can be found (no empty field allowed) before saving the configuration."
+              "Please specify the column where the date can be found (no empty field allowed) before saving the configuration.",
           },
           {
             allow_dismiss: true,
@@ -174,8 +166,8 @@ function saveConfig() {
             placement: { from: "top", align: "left" },
             animate: {
               enter: "animated fadeInDown",
-              exit: "animated fadeOutUp"
-            }
+              exit: "animated fadeOutUp",
+            },
           }
         );
         stop = true;
@@ -187,7 +179,7 @@ function saveConfig() {
         $.notify(
           {
             message:
-              "Please specify the column where the date can be found (must be a non-negative number) before saving the configuration."
+              "Please specify the column where the date can be found (must be a non-negative number) before saving the configuration.",
           },
           {
             allow_dismiss: true,
@@ -195,8 +187,8 @@ function saveConfig() {
             placement: { from: "top", align: "left" },
             animate: {
               enter: "animated fadeInDown",
-              exit: "animated fadeOutUp"
-            }
+              exit: "animated fadeOutUp",
+            },
           }
         );
         stop = true;
@@ -213,12 +205,10 @@ function saveConfig() {
   var streams = [];
   $("#datastreams")
     .find(".datastream")
-    .each(function() {
+    .each(function () {
       var obj = {},
         obs = [];
-      currentInput = $(this)
-        .find("select option:selected")
-        .val();
+      currentInput = $(this).find("select option:selected").val();
       if (currentInput == null || currentInput == "") {
         $.notify(
           { message: "Please leave no datastream empty." },
@@ -228,29 +218,25 @@ function saveConfig() {
             placement: { from: "top", align: "left" },
             animate: {
               enter: "animated fadeInDown",
-              exit: "animated fadeOutUp"
-            }
+              exit: "animated fadeOutUp",
+            },
           }
         );
         stop = true;
         return false;
       }
       obj["dsID"] = JSON.parse(
-        $(this)
-          .find("select option:selected")
-          .attr("data-value")
+        $(this).find("select option:selected").attr("data-value")
       ).frostId;
       $(this)
         .find("tbody tr")
-        .each(function() {
-          currentInput = $(this)
-            .find("td:eq(1) input")
-            .val();
+        .each(function () {
+          currentInput = $(this).find("td:eq(1) input").val();
           if (currentInput == null || currentInput == "") {
             $.notify(
               {
                 message:
-                  "Please specify the column where the observations of each datastream can be found (no empty field allowed) before saving the configuration."
+                  "Please specify the column where the observations of each datastream can be found (no empty field allowed) before saving the configuration.",
               },
               {
                 allow_dismiss: true,
@@ -258,8 +244,8 @@ function saveConfig() {
                 placement: { from: "top", align: "left" },
                 animate: {
                   enter: "animated fadeInDown",
-                  exit: "animated fadeOutUp"
-                }
+                  exit: "animated fadeOutUp",
+                },
               }
             );
             stop = true;
@@ -272,7 +258,7 @@ function saveConfig() {
             $.notify(
               {
                 message:
-                  "Please specify the column where the observations of each datastream can be found (must be a non-negative number) before saving the configuration."
+                  "Please specify the column where the observations of each datastream can be found (must be a non-negative number) before saving the configuration.",
               },
               {
                 allow_dismiss: true,
@@ -280,8 +266,8 @@ function saveConfig() {
                 placement: { from: "top", align: "left" },
                 animate: {
                   enter: "animated fadeInDown",
-                  exit: "animated fadeOutUp"
-                }
+                  exit: "animated fadeOutUp",
+                },
               }
             );
             stop = true;
@@ -311,10 +297,7 @@ function saveConfig() {
   if (!filetype || filetype == "") {
     addToLog("No File specified.");
   } else {
-    filetype = filetype
-      .split(".")
-      .pop()
-      .toUpperCase();
+    filetype = filetype.split(".").pop().toUpperCase();
     if (filetype == "XLSX" || filetype == "XLS") {
       filetype = "EXCEL";
     } else if (filetype !== "CSV") {
@@ -326,13 +309,13 @@ function saveConfig() {
   if ($("#selecttime option:selected").attr("data-value") == null) {
     $.notify(
       {
-        message: "Please choose a time zone before saving the configuration."
+        message: "Please choose a time zone before saving the configuration.",
       },
       {
         allow_dismiss: true,
         type: "info",
         placement: { from: "top", align: "left" },
-        animate: { enter: "animated fadeInDown", exit: "animated fadeOutUp" }
+        animate: { enter: "animated fadeInDown", exit: "animated fadeOutUp" },
       }
     );
     return false;
@@ -340,13 +323,13 @@ function saveConfig() {
     $.notify(
       {
         message:
-          "Please specify where to find the date in your file before saving the configuration."
+          "Please specify where to find the date in your file before saving the configuration.",
       },
       {
         allow_dismiss: true,
         type: "info",
         placement: { from: "top", align: "left" },
-        animate: { enter: "animated fadeInDown", exit: "animated fadeOutUp" }
+        animate: { enter: "animated fadeInDown", exit: "animated fadeOutUp" },
       }
     );
     return false;
@@ -357,7 +340,7 @@ function saveConfig() {
         allow_dismiss: true,
         type: "info",
         placement: { from: "top", align: "left" },
-        animate: { enter: "animated fadeInDown", exit: "animated fadeOutUp" }
+        animate: { enter: "animated fadeInDown", exit: "animated fadeOutUp" },
       }
     );
     return false;
@@ -383,7 +366,7 @@ function saveConfig() {
     streamData: streams,
     mapOfMagicNumbers: map,
     dataType: filetype,
-    frostURL: url
+    frostURL: url,
   };
 
   var jsoncfg = JSON.stringify(formData, null, 4);
@@ -394,18 +377,15 @@ function saveConfig() {
     contentType: "application/json",
     data: jsoncfg,
     dataType: "json",
-    error: function(e) {
+    error: function (e) {
       addToLog(e.responseText);
     },
-    success: function(e) {
+    success: function (e) {
       var option = new Option(e.name, e.name, null, null);
       option.setAttribute("data-value", JSON.stringify(e, null, 4));
-      $("#configs")
-        .append(option)
-        .val(e.name)
-        .trigger("change");
+      $("#configs").append(option).val(e.name).trigger("change");
       addToLog("Configuration saved.");
-    }
+    },
   });
 }
 
@@ -419,11 +399,11 @@ function loadConfig(id) {
     type: "GET",
     url: "config/single",
     data: { configId: id },
-    success: function(response) {
+    success: function (response) {
       mappingData = response.mapOfMagicNumbers;
       $("#frostserverurl").val(response.frostURL);
 
-      urlconfirmed(function() {
+      urlconfirmed(function () {
         $("#delimiter").val(response.delimiter);
         $("#headerlines").val(response.numberOfHeaderlines);
         currentDelimiter = response.delimiter;
@@ -432,11 +412,9 @@ function loadConfig(id) {
 
         $("#selecttime")
           .find("option")
-          .each(function() {
+          .each(function () {
             if ($(this).attr("data-value") === response.timezone) {
-              $("#selecttime")
-                .val($(this).val())
-                .trigger("change");
+              $("#selecttime").val($(this).val()).trigger("change");
             }
           });
 
@@ -453,12 +431,9 @@ function loadConfig(id) {
         }
 
         var i = 0;
-        table.find("tbody tr").each(function() {
+        table.find("tbody tr").each(function () {
           var $td = $(this).find("td");
-          $td
-            .eq(0)
-            .find("input")
-            .val(response.dateTime[i].column);
+          $td.eq(0).find("input").val(response.dateTime[i].column);
           $td
             .eq(1)
             .find("input")
@@ -471,9 +446,9 @@ function loadConfig(id) {
         }
       });
     },
-    error: function(e) {
+    error: function (e) {
       addToLog(e.responseText);
-    }
+    },
   });
 }
 
@@ -484,14 +459,14 @@ function thingConfig(streams, url) {
     data: {
       id: parseInt(streams[0].dsID, 10),
       isMulti: streams[0].multiStream,
-      url: url
+      url: url,
     },
-    success: function(result) {
+    success: function (result) {
       loadThing(result.thing.frostId, streams, url);
     },
-    error: function(e) {
+    error: function (e) {
       addToLog(e.responseText);
-    }
+    },
   });
 }
 
@@ -503,9 +478,9 @@ function loadStreamConfig(stream, div) {
     data: {
       id: parseInt(stream.dsID, 10),
       isMulti: stream.multiStream,
-      url: url
+      url: url,
     },
-    success: function(result) {
+    success: function (result) {
       div
         .find("select")
         .val(result.name + " (" + result.frostId + ")")
@@ -516,15 +491,15 @@ function loadStreamConfig(stream, div) {
       loadStream(result, div);
       loadStreamCol(stream.observations, div);
     },
-    error: function(e) {
+    error: function (e) {
       addToLog(e.responseText);
-    }
+    },
   });
 }
 
 function fillStreams(streams) {
   var child;
-  streams.forEach(function(val) {
+  streams.forEach(function (val) {
     addDatastream();
     child = $("#datastreams > div").last();
     loadStreamConfig(val, child);
@@ -537,26 +512,21 @@ function fillStreams(streams) {
 function resetConfig() {
   document.getElementById("delimiter").value = ";";
   document.getElementById("headerlines").value = "0";
-  $("#things")
-    .val(null)
-    .trigger("change");
-  $("#selecttime")
-    .val(null)
-    .trigger("change");
+  $("#things").val(null).trigger("change");
+  $("#selecttime").val(null).trigger("change");
   $("#timeTable")
     .find("tbody")
     .find("tr")
-    .each(function() {
+    .each(function () {
       this.remove();
     });
   addRow($("#timeTable"), "2", "20");
   document.getElementById("datastreams").innerHTML = "";
-  $("#configs")
-    .val(null)
-    .trigger("change");
+  $("#configs").val(null).trigger("change");
   resetMapping();
 
-  optimizeforsource(); // disables the delimiter and time format if the source
+  optimizeforsource(); // disables the delimiter and time format if the
+  // source
   // file is an excel file
   showstep1();
 }
@@ -580,13 +550,13 @@ function getThings(fnSuccess) {
     type: "GET",
     url: "thing/all",
     data: mydata,
-    success: function(response) {
+    success: function (response) {
       var json = JSON.stringify(response, null, 4);
       var jsonparsed = JSON.parse(json);
 
       var list = $("#things");
       list.empty().append(new Option("", "", null, null));
-      jsonparsed.forEach(function(val) {
+      jsonparsed.forEach(function (val) {
         var option = new Option(
           val.name + " (" + val.frostId + ")",
           val.name + " (" + val.frostId + ")",
@@ -604,9 +574,9 @@ function getThings(fnSuccess) {
         fnSuccess();
       }
     },
-    error: function(e) {
+    error: function (e) {
       addToLog(e.responseText);
-    }
+    },
   });
 }
 
@@ -624,7 +594,7 @@ function getThingStreams(id, cfg, streams) {
     type: "GET",
     url: "datastream/all",
     data: { thingId: id, url: url },
-    success: function(response) {
+    success: function (response) {
       var json = JSON.stringify(response, null, 4);
       var jsonparsed = JSON.parse(json);
 
@@ -634,7 +604,7 @@ function getThingStreams(id, cfg, streams) {
       stream["text"] = "";
       streamData.push(stream);
 
-      jsonparsed.forEach(function(val) {
+      jsonparsed.forEach(function (val) {
         stream = {};
         stream["id"] = val.name + " (" + val.frostId + ")";
         stream["text"] = val.name + " (" + val.frostId + ")";
@@ -649,9 +619,9 @@ function getThingStreams(id, cfg, streams) {
         addDatastream();
       }
     },
-    error: function(e) {
+    error: function (e) {
       addToLog(e.responseText);
-    }
+    },
   });
 }
 
@@ -674,11 +644,7 @@ function addDatastream() {
       .attr("class", "datastream")
       .append(
         $("<div>")
-          .append(
-            $("<label>")
-              .text("Name:")
-              .attr("style", "margin-right:10px")
-          )
+          .append($("<label>").text("Name:").attr("style", "margin-right:10px"))
           .append(
             $("<select>")
               .attr("style", "width: 200px")
@@ -717,10 +683,10 @@ function addDatastream() {
       data: streamData,
       placeholder: "Choose a Datastream",
       width: "style",
-      dropdownAutoWidth: true
+      dropdownAutoWidth: true,
     })
     .trigger("change")
-    .on("select2:select", function(e) {
+    .on("select2:select", function (e) {
       var sel = $(this);
       var parent = sel.parent().parent();
       var json;
@@ -750,15 +716,9 @@ var initial = 1000;
 function importData() {
   var name;
   if ($("input[name=source]:eq(0)").is(":checked")) {
-    name = $("#file")
-      .val()
-      .split("\\")
-      .pop();
+    name = $("#file").val().split("\\").pop();
   } else if ($("input[name=source]:eq(1)").is(":checked")) {
-    name = $("#sourceinput")
-      .val()
-      .split("/")
-      .pop();
+    name = $("#sourceinput").val().split("/").pop();
   }
 
   try {
@@ -782,18 +742,15 @@ function importData() {
   var date = [];
   $("#timeTable")
     .find("tbody tr")
-    .each(function() {
+    .each(function () {
       var obj = {},
         $td = $(this).find("td");
-      currentInput = $td
-        .eq(1)
-        .find("input")
-        .val();
+      currentInput = $td.eq(1).find("input").val();
       if ((currentInput === null || currentInput === "") && isExcel === false) {
         $.notify(
           {
             message:
-              "Please specify the date format (no empty strings allowed)."
+              "Please specify the date format (no empty strings allowed).",
           },
           {
             allow_dismiss: true,
@@ -801,23 +758,20 @@ function importData() {
             placement: { from: "top", align: "left" },
             animate: {
               enter: "animated fadeInDown",
-              exit: "animated fadeOutUp"
-            }
+              exit: "animated fadeOutUp",
+            },
           }
         );
         stop = true;
         return false;
       }
       obj["string"] = currentInput;
-      currentInput = $td
-        .eq(0)
-        .find("input")
-        .val();
+      currentInput = $td.eq(0).find("input").val();
       if (currentInput === null || currentInput === "") {
         $.notify(
           {
             message:
-              "Please specify the column where the date can be found (no empty field allowed) before importing data."
+              "Please specify the column where the date can be found (no empty field allowed) before importing data.",
           },
           {
             allow_dismiss: true,
@@ -825,8 +779,8 @@ function importData() {
             placement: { from: "top", align: "left" },
             animate: {
               enter: "animated fadeInDown",
-              exit: "animated fadeOutUp"
-            }
+              exit: "animated fadeOutUp",
+            },
           }
         );
         stop = true;
@@ -837,7 +791,7 @@ function importData() {
         $.notify(
           {
             message:
-              "Please specify the column where the date can be found (must be a non-negative number) before importing data."
+              "Please specify the column where the date can be found (must be a non-negative number) before importing data.",
           },
           {
             allow_dismiss: true,
@@ -845,8 +799,8 @@ function importData() {
             placement: { from: "top", align: "left" },
             animate: {
               enter: "animated fadeInDown",
-              exit: "animated fadeOutUp"
-            }
+              exit: "animated fadeOutUp",
+            },
           }
         );
         stop = true;
@@ -861,12 +815,10 @@ function importData() {
   var streams = [];
   $("#datastreams")
     .find(".datastream")
-    .each(function() {
+    .each(function () {
       var obj = {},
         obs = [];
-      currentInput = $(this)
-        .find("select option:selected")
-        .val();
+      currentInput = $(this).find("select option:selected").val();
       if (currentInput == null || currentInput == "") {
         $.notify(
           { message: "Please leave no datastream empty." },
@@ -876,37 +828,33 @@ function importData() {
             placement: { from: "top", align: "left" },
             animate: {
               enter: "animated fadeInDown",
-              exit: "animated fadeOutUp"
-            }
+              exit: "animated fadeOutUp",
+            },
           }
         );
         stop = true;
         return false;
       }
       obj["dsID"] = JSON.parse(
-        $(this)
-          .find("select option:selected")
-          .attr("data-value")
+        $(this).find("select option:selected").attr("data-value")
       ).frostId;
       $(this)
         .find("tbody tr")
-        .each(function() {
-          currentInput = $(this)
-            .find("td:eq(1) input")
-            .val();
+        .each(function () {
+          currentInput = $(this).find("td:eq(1) input").val();
           if (currentInput == null || currentInput == "") {
             $.notify(
               {
                 message:
-                  "Please specify the column where the observations of each datastream can be found (no empty field allowed) before importing data."
+                  "Please specify the column where the observations of each datastream can be found (no empty field allowed) before importing data.",
               },
               {
                 type: "info",
                 placement: { from: "top", align: "left" },
                 animate: {
                   enter: "animated fadeInDown",
-                  exit: "animated fadeOutUp"
-                }
+                  exit: "animated fadeOutUp",
+                },
               }
             );
             stop = true;
@@ -919,15 +867,15 @@ function importData() {
             $.notify(
               {
                 message:
-                  "Please specify the column where the observations of each datastream can be found (must be a non-negative number) before importing data."
+                  "Please specify the column where the observations of each datastream can be found (must be a non-negative number) before importing data.",
               },
               {
                 type: "info",
                 placement: { from: "top", align: "left" },
                 animate: {
                   enter: "animated fadeInDown",
-                  exit: "animated fadeOutUp"
-                }
+                  exit: "animated fadeOutUp",
+                },
               }
             );
             stop = true;
@@ -956,10 +904,7 @@ function importData() {
   if (!filetype || filetype === "") {
     addToLog("No File specified.");
   } else {
-    filetype = filetype
-      .split(".")
-      .pop()
-      .toUpperCase();
+    filetype = filetype.split(".").pop().toUpperCase();
     if (filetype === "XLSX" || filetype === "XLS") {
       filetype = "EXCEL";
     } else if (filetype !== "CSV") {
@@ -979,7 +924,7 @@ function importData() {
     streamData: streams,
     mapOfMagicNumbers: map,
     dataType: filetype,
-    frostURL: url
+    frostURL: url,
   };
 
   var jsoncfg = JSON.stringify(formData, null, 4);
@@ -990,7 +935,7 @@ function importData() {
       {
         type: "info",
         placement: { from: "top", align: "left" },
-        animate: { enter: "animated fadeInDown", exit: "animated fadeOutUp" }
+        animate: { enter: "animated fadeInDown", exit: "animated fadeOutUp" },
       }
     );
     return false;
@@ -998,12 +943,12 @@ function importData() {
     $.notify(
       {
         message:
-          "Please specify where to find the date in your file before importing data."
+          "Please specify where to find the date in your file before importing data.",
       },
       {
         type: "info",
         placement: { from: "top", align: "left" },
-        animate: { enter: "animated fadeInDown", exit: "animated fadeOutUp" }
+        animate: { enter: "animated fadeInDown", exit: "animated fadeOutUp" },
       }
     );
     return false;
@@ -1013,7 +958,7 @@ function importData() {
       {
         type: "info",
         placement: { from: "top", align: "left" },
-        animate: { enter: "animated fadeInDown", exit: "animated fadeOutUp" }
+        animate: { enter: "animated fadeInDown", exit: "animated fadeOutUp" },
       }
     );
     return false;
@@ -1024,7 +969,7 @@ function importData() {
         type: "info",
         allow_dismiss: true,
         placement: { from: "top", align: "left" },
-        animate: { enter: "animated fadeInDown", exit: "animated fadeOutUp" }
+        animate: { enter: "animated fadeInDown", exit: "animated fadeOutUp" },
       }
     );
     addToLog("Import of File " + name + " started.");
@@ -1034,7 +979,7 @@ function importData() {
       type: "POST",
       url: "importQueue",
       data: mydata,
-      success: function(e) {
+      success: function (e) {
         addToLog(e);
         $.notify(
           { message: "Import finished" },
@@ -1044,12 +989,12 @@ function importData() {
             placement: { from: "top", align: "left" },
             animate: {
               enter: "animated fadeInDown",
-              exit: "animated fadeOutUp"
-            }
+              exit: "animated fadeOutUp",
+            },
           }
         );
       },
-      error: function(e) {
+      error: function (e) {
         $.notify(
           { message: "Import failed. Check log for errors." },
           {
@@ -1058,13 +1003,13 @@ function importData() {
             placement: { from: "top", align: "left" },
             animate: {
               enter: "animated fadeInDown",
-              exit: "animated fadeOutUp"
-            }
+              exit: "animated fadeOutUp",
+            },
           }
         );
         addToLog(e.responseText);
         clearInterval(id);
-      }
+      },
     });
   }
 }
@@ -1073,7 +1018,7 @@ function progress() {
   $.ajax({
     type: "GET",
     url: "progress",
-    success: function(response) {
+    success: function (response) {
       var x = false;
       check(response, x);
       if (x) {
@@ -1094,16 +1039,42 @@ function progress() {
         var temp = id;
         id = setInterval(progress, initial);
         clearInterval(temp);
-      }
-      if (response !== "Finished") {
-        addToLog(response);
-        var resp = response;
-        resp = resp.slice(-3);
-        resp = resp.substring(0, 2);
-        document.getElementById("progress").value = resp;
+      } else {
+        var isHtml = response.match(/(<html>)/);
+        if (isHtml) {
+          addToLog("ishtml");
+          var statusArr = response.match(/(\d\d\d)/);
+          if (statusArr) {
+            var statusCode = statusArr[1];
+            if (statusCode !== "200") {
+              addToLog(
+                "Requesting the progress failed. This does not affect the import. \n Error is: \n" +
+                  response
+              );
+            } else {
+              addToLog(
+                "Unexpected response for progress request. This does not affect the import.\n Response is: \n" +
+                  response
+              );
+            }
+          } else {
+            addToLog(
+              "Unexpected response for progress request. This does not affect the import.\n Response is: \n" +
+                response
+            );
+          }
+        } else {
+          if (response !== "Finished") {
+            addToLog(response);
+            var resp = response;
+            resp = resp.slice(-3);
+            resp = resp.substring(0, 2);
+            document.getElementById("progress").value = resp;
+          }
+        }
       }
     },
-    error: function(e) {
+    error: function (e) {
       if (retry === 5) {
         addToLog("Progress could not be queried, stopping.");
         retry = 0;
@@ -1112,7 +1083,7 @@ function progress() {
       }
       retry++;
       addToLog("Could not get progress. Retrying " + 5 - retry + " more times");
-    }
+    },
   });
 }
 
@@ -1153,7 +1124,7 @@ function urlconfirmed(fnSuccess) {
     type: "GET",
     url: "server-check",
     data: mydata,
-    success: function(response) {
+    success: function (response) {
       message = response;
       if (response === "Server reachable") {
         document.getElementById("serverurlbox").innerText = url;
@@ -1162,7 +1133,7 @@ function urlconfirmed(fnSuccess) {
         addToLog("FROST-Server: " + url);
 
         addToLog("Try to load things ...");
-        getThings(function() {
+        getThings(function () {
           // hide loader
           document.getElementById("loader").style.display = "none";
           if (!(fnSuccess == null)) {
@@ -1178,14 +1149,14 @@ function urlconfirmed(fnSuccess) {
         document.getElementById("loader").style.display = "none";
       }
     },
-    error: function(e) {
+    error: function (e) {
       addToLog(e.responseText);
       document.querySelector("#frostserverurl").value = "";
       document.getElementById("serverurlbox").innerText = "";
       document.getElementById("serverurlbox").href = "";
       // hide loader
       document.getElementById("loader").style.display = "none";
-    }
+    },
   });
 }
 
@@ -1227,11 +1198,7 @@ function resizeLog() {
  */
 function loadStreamCol(observations, div) {
   for (var i = 0; i < observations.length; i++) {
-    div
-      .find("tbody tr")
-      .eq(i)
-      .find("td input")
-      .val(observations[i]);
+    div.find("tbody tr").eq(i).find("td input").val(observations[i]);
   }
 }
 
@@ -1240,23 +1207,21 @@ function loadThing(id, streams, url) {
     type: "GET",
     url: "thing/single",
     data: { thingId: parseInt(id, 10), frostUrlString: url },
-    success: function(result) {
+    success: function (result) {
       $("#things")
         .val(result.name + " (" + result.frostId + ")")
         .trigger("change");
       getThingStreams(result.frostId, true, streams);
     },
-    error: function(e) {
+    error: function (e) {
       addToLog(e.responseText);
-    }
+    },
   });
 }
 
 function loadStream(stream, div) {
   var rows = stream.units_of_measurement.length;
-  $(div)
-    .find("tbody")
-    .empty();
+  $(div).find("tbody").empty();
   for (var i = 0; i < rows; i++) {
     $(div)
       .find("tbody")
@@ -1265,9 +1230,7 @@ function loadStream(stream, div) {
           .append($("<td>").text(stream.units_of_measurement[i].symbol))
           .append(
             $("<td>").append(
-              $("<input>")
-                .attr("type", "text")
-                .attr("size", "5")
+              $("<input>").attr("type", "text").attr("size", "5")
             )
           )
       );
@@ -1284,7 +1247,7 @@ function getThing() {
  * @param e
  *            a config
  */
-$("#configs").on("select2:select", function(e) {
+$("#configs").on("select2:select", function (e) {
   var json = JSON.parse($("#configs option:selected").attr("data-value"));
   if (json) {
     loadConfig(json.id);
@@ -1292,7 +1255,7 @@ $("#configs").on("select2:select", function(e) {
   openaccordion("currentConfigAcc");
 });
 
-$("#things").on("select2:select", function(e) {
+$("#things").on("select2:select", function (e) {
   var json = getThing();
   if (json) {
     getThingStreams(json.frostId);
@@ -1310,6 +1273,6 @@ function fileConfirmed() {
   openaccordion("chooseConfigAcc");
 }
 
-$(document).ready(function() {
+$(document).ready(function () {
   $("[data-toggle='tooltip']").tooltip();
 });
